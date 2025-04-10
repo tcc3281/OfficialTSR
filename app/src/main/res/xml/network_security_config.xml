@@ -1,0 +1,11 @@
+<network-security-config>
+    <!-- Cho phép HTTP cho Emulator (10.0.2.2) -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">10.0.2.2</domain>
+    </domain-config>
+
+    <!-- Cho phép HTTP cho IP local của máy (ví dụ: 192.168.1.100) -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">192.168.1.15</domain>
+    </domain-config>
+</network-security-config>

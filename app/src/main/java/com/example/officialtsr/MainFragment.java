@@ -12,6 +12,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.officialtsr.api.RetrofitClient;
+import com.example.officialtsr.api.TrafficSignApiService;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MainFragment extends Fragment {
 
     @Nullable
@@ -34,8 +41,29 @@ public class MainFragment extends Fragment {
     }
 
     private void openNotification() {
-        // Placeholder for notification functionality
-        Toast.makeText(requireContext(), "Notification button clicked", Toast.LENGTH_SHORT).show();
-        // Add intent to open notification activity if needed
+        TrafficSignApiService apiService = RetrofitClient.getInstance().create(TrafficSignApiService.class);
+        apiService.getTestString().enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    String testString = response.body();
+
+                    NotificationCameraFragment fragment = new NotificationCameraFragment();
+                    fragment.setTestString(testString);
+
+                    requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, fragment)
+                        .addToBackStack(null)
+                        .commit();
+                } else {
+                    Toast.makeText(requireContext(), "Failed to fetch test string", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(requireContext(), "API call failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
