@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "590716820711",
+    "firebase_url": "https://vocabtoeic-23b22-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "vocabtoeic-23b22",
+    "storage_bucket": "vocabtoeic-23b22.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:590716820711:android:011c58827be269eed8d642",
+        "android_client_info": {
+          "package_name": "com.example.officialtsr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "590716820711-psgfmdi2cpnvf4bsl1f45qmsjfu9ljml.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.officialtsr",
+            "certificate_hash": "89dcbd5866619d69d84daa65270d215b884e5f84"
+          }
+        },
+        {
+          "client_id": "590716820711-4o7d25272l7h2b91n34l6fsqsllcc7th.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRMIh0oTqUHrqju5YRxf6wtZFPvmfo2I8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "590716820711-4o7d25272l7h2b91n34l6fsqsllcc7th.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

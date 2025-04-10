@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">TSR</string>
+    <string name="default_web_client_id">DEFAULT_CLIENT_ID</string>
+</resources>

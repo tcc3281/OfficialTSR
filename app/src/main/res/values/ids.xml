@@ -1,0 +1,5 @@
+<resources>
+    <item name="nav_main" type="id" />
+    <item name="nav_list" type="id" />
+    <item name="nav_settings" type="id" />
+</resources>
