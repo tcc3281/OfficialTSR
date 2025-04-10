@@ -24,7 +24,7 @@
         tools:targetApi="31">
 
         <activity
-            android:name=".AccountActivity"
+            android:name=".activities.AccountActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,10 +33,10 @@
         </activity>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:exported="true"></activity>
 
-        <activity android:name=".CameraActivity" />
+        <activity android:name=".activities.CameraActivity" />
 
     </application>
 

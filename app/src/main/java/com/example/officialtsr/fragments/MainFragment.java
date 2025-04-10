@@ -1,4 +1,4 @@
-package com.example.officialtsr;
+package com.example.officialtsr.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.officialtsr.R;
+import com.example.officialtsr.activities.CameraActivity;
 import com.example.officialtsr.api.RetrofitClient;
 import com.example.officialtsr.api.TrafficSignApiService;
 

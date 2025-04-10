@@ -1,6 +1,6 @@
 package com.example.officialtsr.api;
 
-import com.example.officialtsr.TrafficSign;
+import com.example.officialtsr.models.TrafficSign;
 
 import java.util.List;
 

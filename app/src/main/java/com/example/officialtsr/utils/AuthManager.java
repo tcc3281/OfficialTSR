@@ -1,4 +1,4 @@
-package com.example.officialtsr;
+package com.example.officialtsr.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;

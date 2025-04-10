@@ -1,4 +1,4 @@
-package com.example.officialtsr;
+package com.example.officialtsr.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.example.officialtsr.R;
 
 public class TrafficSignDetailsFragment extends Fragment {
 

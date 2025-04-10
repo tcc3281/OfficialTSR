@@ -1,4 +1,4 @@
-package com.example.officialtsr;
+package com.example.officialtsr.adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;

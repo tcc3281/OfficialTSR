@@ -1,4 +1,4 @@
-package com.example.officialtsr;
+package com.example.officialtsr.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +15,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.officialtsr.utils.AuthManager;
+import com.example.officialtsr.fragments.ListFragment;
+import com.example.officialtsr.fragments.MainFragment;
+import com.example.officialtsr.R;
+import com.example.officialtsr.fragments.SettingsFragment;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
