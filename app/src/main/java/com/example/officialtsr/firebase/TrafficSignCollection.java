@@ -1,4 +1,4 @@
-package com.example.officialtsr;
+package com.example.officialtsr.firebase;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;

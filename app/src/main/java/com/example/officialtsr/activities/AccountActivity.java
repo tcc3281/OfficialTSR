@@ -1,4 +1,4 @@
-package com.example.officialtsr;
+package com.example.officialtsr.activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -14,6 +14,9 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.officialtsr.utils.AnalyticsHelper;
+import com.example.officialtsr.utils.AuthManager;
+import com.example.officialtsr.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -39,10 +42,9 @@ public class AccountActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
 
-        // Kiểm tra đăng nhập tự động
         authManager = new AuthManager(this);
         if (authManager.isLoggedIn()) {
-            navigateToMainActivity();
+            navigateToMainActivity(); // Chuyển đến MainActivity nếu đã đăng nhập
             return;
         }
 

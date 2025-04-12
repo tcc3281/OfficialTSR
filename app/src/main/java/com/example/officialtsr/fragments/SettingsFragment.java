@@ -1,4 +1,4 @@
-package com.example.officialtsr;
+package com.example.officialtsr.fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +16,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.officialtsr.utils.AuthManager;
+import com.example.officialtsr.R;
+import com.example.officialtsr.activities.AccountActivity;
+import com.example.officialtsr.adapters.SettingsAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class SettingsFragment extends Fragment {

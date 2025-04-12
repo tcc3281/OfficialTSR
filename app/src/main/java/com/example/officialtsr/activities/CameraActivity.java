@@ -1,4 +1,4 @@
-package com.example.officialtsr;
+package com.example.officialtsr.activities;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -13,6 +13,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+
+import com.example.officialtsr.R;
 
 import java.io.IOException;
 

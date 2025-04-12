@@ -1,4 +1,4 @@
-package com.example.officialtsr;
+package com.example.officialtsr.adapters;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.officialtsr.R;
+import com.example.officialtsr.models.TrafficSign;
 
 import java.util.List;
 

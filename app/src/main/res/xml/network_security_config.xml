@@ -1,0 +1,11 @@
+<network-security-config>
+    <!-- Cho phép HTTP cho Emulator (10.0.2.2) -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">10.0.2.2</domain>
+    </domain-config>
+
+    <!-- Cho phép HTTP cho host từ xa -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">3.107.235.182</domain>
+    </domain-config>
+</network-security-config>

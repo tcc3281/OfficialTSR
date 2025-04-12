@@ -1,4 +1,4 @@
-package com.example.officialtsr;
+package com.example.officialtsr.models;
 
 public class TrafficSign {
     private String name;
