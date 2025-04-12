@@ -3,54 +3,34 @@ package com.example.officialtsr.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import androidx.annotation.NonNull;
-import androidx.security.crypto.EncryptedSharedPreferences;
-import androidx.security.crypto.MasterKeys;
-
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-
 public class AuthManager {
-    private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
-    private static final String KEY_GOOGLE_ID_TOKEN = "googleIdToken";
+    private static final String PREF_NAME = "auth_prefs";
+    private static final String KEY_IS_LOGGED_IN = "is_logged_in";
+    private static final String KEY_ID_TOKEN = "id_token";
 
-    private final SharedPreferences securePrefs;
+    private final SharedPreferences sharedPreferences;
 
-    public AuthManager(@NonNull Context context) {
-        try {
-            // Correctly get or create the master key for encryption
-            String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
-
-            // Initialize EncryptedSharedPreferences
-            securePrefs = EncryptedSharedPreferences.create(
-                    "secure_auth_prefs",
-                    masterKeyAlias,
-                    context,
-                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            );
-        } catch (GeneralSecurityException | IOException e) {
-            throw new RuntimeException("Failed to initialize secure preferences", e);
-        }
-    }
-
-    public void saveLoginState(boolean isLoggedIn, String idToken) {
-        securePrefs.edit()
-                .putBoolean(KEY_IS_LOGGED_IN, isLoggedIn)
-                .putString(KEY_GOOGLE_ID_TOKEN, idToken)
-                .apply();
+    public AuthManager(Context context) {
+        sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
     public boolean isLoggedIn() {
-        return securePrefs.getBoolean(KEY_IS_LOGGED_IN, false);
+        return sharedPreferences.getBoolean(KEY_IS_LOGGED_IN, false);
+    }
+
+    public void saveLoginState(boolean isLoggedIn, String idToken) {
+        sharedPreferences.edit()
+                .putBoolean(KEY_IS_LOGGED_IN, isLoggedIn)
+                .putString(KEY_ID_TOKEN, idToken)
+                .apply();
     }
 
     public String getIdToken() {
-        return securePrefs.getString(KEY_GOOGLE_ID_TOKEN, null);
+        return sharedPreferences.getString(KEY_ID_TOKEN, null);
     }
 
     public void logout() {
-        securePrefs.edit()
+        sharedPreferences.edit()
                 .clear()
                 .apply();
     }

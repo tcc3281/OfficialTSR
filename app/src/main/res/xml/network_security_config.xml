@@ -4,8 +4,8 @@
         <domain includeSubdomains="true">10.0.2.2</domain>
     </domain-config>
 
-    <!-- Cho phép HTTP cho IP local của máy (ví dụ: 192.168.1.100) -->
+    <!-- Cho phép HTTP cho host từ xa -->
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">192.168.1.5</domain>
+        <domain includeSubdomains="true">3.107.235.182</domain>
     </domain-config>
 </network-security-config>

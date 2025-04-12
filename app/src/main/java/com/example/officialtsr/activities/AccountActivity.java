@@ -42,10 +42,9 @@ public class AccountActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
 
-        // Kiểm tra đăng nhập tự động
         authManager = new AuthManager(this);
         if (authManager.isLoggedIn()) {
-            navigateToMainActivity();
+            navigateToMainActivity(); // Chuyển đến MainActivity nếu đã đăng nhập
             return;
         }
 
