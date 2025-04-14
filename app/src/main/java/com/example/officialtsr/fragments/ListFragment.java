@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.officialtsr.R;
 import com.example.officialtsr.models.TrafficSign;
 import com.example.officialtsr.adapters.TrafficSignAdapter;
+import com.example.officialtsr.activities.MainActivity;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -31,6 +32,7 @@ public class ListFragment extends Fragment {
     private ProgressBar progressBar;
     private TrafficSignAdapter adapter;
     private List<TrafficSign> trafficSigns;
+    private boolean isDataLoaded = false;
 
     @Nullable
     @Override
@@ -45,15 +47,24 @@ public class ListFragment extends Fragment {
         adapter = new TrafficSignAdapter(getContext(), trafficSigns, this::showTrafficSignDetails);
         recyclerView.setAdapter(adapter);
 
-        fetchTrafficSigns();
+        loadTrafficSigns();
 
         return view;
     }
 
-    private void fetchTrafficSigns() {
-        showLoading(true);
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("TrafficSign")
+    private void loadTrafficSigns() {
+        MainActivity mainActivity = (MainActivity) requireActivity();
+        List<TrafficSign> cachedTrafficSigns = mainActivity.getCachedTrafficSigns();
+
+        if (!cachedTrafficSigns.isEmpty()) {
+            trafficSigns.clear();
+            trafficSigns.addAll(cachedTrafficSigns);
+            adapter.notifyDataSetChanged();
+            showLoading(false);
+        } else if (!isDataLoaded) {
+            showLoading(true);
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("TrafficSign")
                 .orderBy("SIGN_NAME", Query.Direction.ASCENDING)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -65,34 +76,28 @@ public class ListFragment extends Fragment {
                         String type = document.getString("TYPE");
                         String description = document.getString("DESCRIPTION");
 
-                        // Log the retrieved fields
-                        Log.d(TAG, "Document ID: " + document.getId());
-                        Log.d(TAG, "IMAGE_LINK: " + imageLink);
-                        Log.d(TAG, "LAW_ID: " + lawId);
-                        Log.d(TAG, "SIGN_NAME: " + signName);
-                        Log.d(TAG, "TYPE: " + type);
-                        Log.d(TAG, "DESCRIPTION: " + description);
-
-                        // Handle null values gracefully
                         if (imageLink != null && lawId != null && signName != null && type != null) {
                             trafficSigns.add(new TrafficSign(
-                                    null,
-                                    description != null ? description : "No description available", // Default value for null
-                                    imageLink,
-                                    lawId,
-                                    signName,
-                                    type
+                                null,
+                                description != null ? description : "No description available",
+                                imageLink,
+                                lawId,
+                                signName,
+                                type
                             ));
                         }
                     });
+
+                    mainActivity.saveTrafficSigns(trafficSigns);
                     adapter.notifyDataSetChanged();
+                    isDataLoaded = true;
                     showLoading(false);
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Failed to fetch data: " + e.getMessage(), e);
-                    Toast.makeText(getContext(), "Failed to fetch data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Failed to load traffic signs: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     showLoading(false);
                 });
+        }
     }
 
     private void showLoading(boolean isLoading) {

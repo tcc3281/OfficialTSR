@@ -41,12 +41,22 @@
         android:layout_marginBottom="8dp" />
 
     <TextView
-        android:id="@+id/account_phone"
+        android:id="@+id/account_date_of_birth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Phone Number"
+        android:text="Date of Birth"
         android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@id/account_email"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/btn_edit_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit"
+        app:layout_constraintTop_toBottomOf="@id/account_date_of_birth"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
