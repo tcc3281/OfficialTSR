@@ -14,6 +14,10 @@ import android.view.Surface;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+import android.content.res.Configuration;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,11 +29,14 @@ import com.example.officialtsr.api.TrafficSignApiService;
 import com.example.officialtsr.utils.ImageCompressor;
 import com.example.officialtsr.views.CameraPreview;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -50,11 +57,20 @@ public class CameraActivity extends AppCompatActivity {
     private Handler frameHandler = new Handler(Looper.getMainLooper());
     private Runnable frameCaptureRunnable;
     private Button sendButton;
+    private ListView resultListView;
+    private ArrayAdapter<String> resultAdapter;
+    private List<String> results = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
+
+        resultListView = findViewById(R.id.result_list);
+        resultAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, results);
+        resultListView.setAdapter(resultAdapter);
+
+        adjustLayoutForOrientation(getResources().getConfiguration().orientation);
 
         sendButton = findViewById(R.id.btn_send_frame);
         sendButton.setOnClickListener(v -> captureAndSendFrame());
@@ -224,14 +240,44 @@ public class CameraActivity extends AppCompatActivity {
     private void handleApiResponse(String responseBody) {
         try {
             JSONObject jsonResponse = new JSONObject(responseBody);
-            String classificationResults = jsonResponse.optString("classification_results", "No results");
+            JSONArray classificationResults = jsonResponse.optJSONArray("classification_results");
 
-            runOnUiThread(() -> {
-                Toast.makeText(CameraActivity.this, "Classification Results: " + classificationResults, Toast.LENGTH_LONG).show();
-            });
+            results.clear();
+            if (classificationResults != null) {
+                for (int i = 0; i < classificationResults.length(); i++) {
+                    results.add(classificationResults.getString(i));
+                }
+            } else {
+                results.add("No results");
+            }
+
+            runOnUiThread(() -> resultAdapter.notifyDataSetChanged());
         } catch (Exception e) {
             Log.e(TAG, "Error parsing API response: " + e.getMessage(), e);
         }
+    }
+
+    private void adjustLayoutForOrientation(int orientation) {
+        LinearLayout rootLayout = findViewById(R.id.main_layout);
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            rootLayout.setOrientation(LinearLayout.HORIZONTAL);
+            LinearLayout.LayoutParams previewParams = (LinearLayout.LayoutParams) findViewById(R.id.camera_preview).getLayoutParams();
+            previewParams.weight = 1;
+            LinearLayout.LayoutParams resultParams = (LinearLayout.LayoutParams) findViewById(R.id.result_list).getLayoutParams();
+            resultParams.weight = 1;
+        } else {
+            rootLayout.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout.LayoutParams previewParams = (LinearLayout.LayoutParams) findViewById(R.id.camera_preview).getLayoutParams();
+            previewParams.weight = 1;
+            LinearLayout.LayoutParams resultParams = (LinearLayout.LayoutParams) findViewById(R.id.result_list).getLayoutParams();
+            resultParams.weight = 1;
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        adjustLayoutForOrientation(newConfig.orientation);
     }
 
     @Override

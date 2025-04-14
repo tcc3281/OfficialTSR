@@ -16,9 +16,6 @@ import retrofit2.http.Part;
 
 public interface TrafficSignApiService {
 
-    @GET("traffic-signs")
-    Call<List<TrafficSign>> getTrafficSigns();
-
     @GET("test")
     Call<String> getTestString();
 
