@@ -3,8 +3,6 @@ package com.example.officialtsr.activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -43,7 +41,7 @@ public class AccountActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         authManager = new AuthManager(this);
 
-        if (authManager.isLoggedIn()) {
+        if (authManager.isLoggedIn()) { // Check login state
             navigateToMainActivity();
             return;
         }
@@ -64,7 +62,7 @@ public class AccountActivity extends AppCompatActivity {
     private void setupUI() {
         emailInput = findViewById(R.id.input_email);
         passwordInput = findViewById(R.id.input_password);
-        com.google.android.gms.common.SignInButton googleSignInButton = findViewById(R.id.btn_google_sign_in); // Correct type
+        com.google.android.gms.common.SignInButton googleSignInButton = findViewById(R.id.btn_google_sign_in);
         Button emailSignInButton = findViewById(R.id.btn_email_sign_in);
         Button emailRegisterButton = findViewById(R.id.btn_email_register);
 
@@ -98,7 +96,7 @@ public class AccountActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     progressDialog.dismiss();
                     if (task.isSuccessful()) {
-                        authManager.saveLoginState(true, null);
+                        authManager.saveLoginState(true, null); // Save login state
                         navigateToMainActivity();
                     } else {
                         Exception exception = task.getException();
@@ -149,7 +147,7 @@ public class AccountActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     progressDialog.dismiss();
                     if (task.isSuccessful()) {
-                        authManager.saveLoginState(true, null);
+                        authManager.saveLoginState(true, null); // Save login state
                         navigateToMainActivity();
                     } else {
                         showError("Đăng nhập Google thất bại.");
