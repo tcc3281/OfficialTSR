@@ -53,9 +53,6 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        // Update the bell icon based on the current theme
-        updateNotificationIcon(isDarkMode);
-
         authManager = new AuthManager(this);
         mGoogleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
 
@@ -91,14 +88,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         loadTrafficSigns(); // Load traffic signs once
-    }
-
-    public void updateNotificationIcon(boolean isDarkMode) {
-        ImageView notificationIcon = findViewById(R.id.notification_icon);
-        if (notificationIcon != null) {
-            // Reverse the logic: use black for dark mode and white for light mode
-            notificationIcon.setImageResource(isDarkMode ? R.drawable.ic_bell_black : R.drawable.ic_bell_white);
-        }
     }
 
     private void loadTrafficSigns() {

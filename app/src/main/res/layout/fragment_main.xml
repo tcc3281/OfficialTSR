@@ -15,19 +15,6 @@
             android:id="@+id/btn_camera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Camera"
-            android:layout_marginEnd="16dp" />
-
-        <Button
-            android:id="@+id/btn_notification"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Notification" />
+            android:text="Camera" />
     </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Main Fragment"
-        android:layout_gravity="center" />
 </LinearLayout>
