@@ -57,7 +57,7 @@ public class CameraActivity extends AppCompatActivity {
     private static final String TAG = "CameraActivity";
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     private static final int FRAME_INTERVAL = 5000; // 5 seconds
-    private static final int REFRESH_INTERVAL = 5000; // 3 seconds
+    private static final int REFRESH_INTERVAL = 5000; // 5 seconds
 
     private Camera camera;
     private CameraPreview cameraPreview;
