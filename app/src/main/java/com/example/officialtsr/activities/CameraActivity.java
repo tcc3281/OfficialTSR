@@ -15,19 +15,25 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 import android.content.res.Configuration;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.LinearLayout;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.officialtsr.R;
+import com.example.officialtsr.adapters.TrafficSignAdapter;
 import com.example.officialtsr.api.RetrofitClient;
 import com.example.officialtsr.api.TrafficSignApiService;
+import com.example.officialtsr.models.TrafficSign;
 import com.example.officialtsr.utils.ImageCompressor;
 import com.example.officialtsr.views.CameraPreview;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -51,26 +57,31 @@ public class CameraActivity extends AppCompatActivity {
     private static final String TAG = "CameraActivity";
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     private static final int FRAME_INTERVAL = 5000; // 5 seconds
+    private static final int REFRESH_INTERVAL = 5000; // 5 seconds
 
     private Camera camera;
     private CameraPreview cameraPreview;
     private Handler frameHandler = new Handler(Looper.getMainLooper());
     private Runnable frameCaptureRunnable;
     private Button sendButton;
-    private ListView resultListView;
-    private ArrayAdapter<String> resultAdapter;
-    private List<String> results = new ArrayList<>();
+    private RecyclerView resultRecyclerView;
+    private TrafficSignAdapter trafficSignAdapter;
+    private List<TrafficSign> trafficSigns = new ArrayList<>();
+    private Handler refreshHandler = new Handler(Looper.getMainLooper());
+    private Runnable refreshRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
-        resultListView = findViewById(R.id.result_list);
-        resultAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, results);
-        resultListView.setAdapter(resultAdapter);
-
-        adjustLayoutForOrientation(getResources().getConfiguration().orientation);
+        resultRecyclerView = findViewById(R.id.result_list);
+        resultRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        trafficSignAdapter = new TrafficSignAdapter(this, trafficSigns, trafficSign -> {
+            // Handle item click if needed
+            Toast.makeText(this, "Selected: " + trafficSign.getSignName(), Toast.LENGTH_SHORT).show();
+        });
+        resultRecyclerView.setAdapter(trafficSignAdapter);
 
         sendButton = findViewById(R.id.btn_send_frame);
         sendButton.setOnClickListener(v -> captureAndSendFrame());
@@ -92,6 +103,8 @@ public class CameraActivity extends AppCompatActivity {
             Toast.makeText(this, "Failed to access camera", Toast.LENGTH_SHORT).show();
             finish();
         }
+
+        startAutoRefresh(); // Start auto-refresh
     }
 
     private Camera getCameraInstance() {
@@ -241,20 +254,73 @@ public class CameraActivity extends AppCompatActivity {
         try {
             JSONObject jsonResponse = new JSONObject(responseBody);
             JSONArray classificationResults = jsonResponse.optJSONArray("classification_results");
-
-            results.clear();
-            if (classificationResults != null) {
+            List<String> detectedLabels = new ArrayList<>();
+            if (classificationResults != null && classificationResults.length() > 0) {
+                
                 for (int i = 0; i < classificationResults.length(); i++) {
-                    results.add(classificationResults.getString(i));
+                    detectedLabels.add(classificationResults.getString(i)); // Collect all detected labels
                 }
+                fetchTrafficSignDetails(detectedLabels); // Pass all labels to fetchTrafficSignDetails
             } else {
-                results.add("No results");
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "No matching traffic signs found", Toast.LENGTH_SHORT).show();
+                });
+                detectedLabels.clear(); // Clear the list if no labels are detected
+                fetchTrafficSignDetails(detectedLabels);
             }
-
-            runOnUiThread(() -> resultAdapter.notifyDataSetChanged());
         } catch (Exception e) {
             Log.e(TAG, "Error parsing API response: " + e.getMessage(), e);
         }
+    }
+
+    private void fetchTrafficSignDetails(List<String> labels) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        trafficSigns.clear(); // Always clear the list to ensure it refreshes
+        trafficSignAdapter.notifyDataSetChanged(); // Notify adapter immediately to reflect the empty state
+
+        if (labels.isEmpty()) {
+            Log.d(TAG, "No labels detected by the API.");
+            return; // No labels to query, exit early
+        }
+
+        db.collection("TrafficSign")
+            .whereIn("LABEL", labels) // Query for all matching labels
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                if (!queryDocumentSnapshots.isEmpty()) {
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        String name = document.getString("SIGN_NAME");
+                        String description = document.getString("DESCRIPTION");
+                        String imageLink = document.getString("IMAGE_LINK");
+                        String lawId = document.getString("LAW_ID");
+                        String label = document.getString("LABEL");
+
+                        trafficSigns.add(new TrafficSign(
+                            name,
+                            description,
+                            imageLink,
+                            lawId,
+                            name,
+                            null,
+                            label
+                        ));
+                    }
+                } else {
+                    Log.d(TAG, "No matching traffic signs found in Firestore.");
+                }
+                runOnUiThread(() -> trafficSignAdapter.notifyDataSetChanged()); // Refresh the adapter
+            })
+            .addOnFailureListener(e -> {
+                Log.e(TAG, "Error fetching traffic sign details: " + e.getMessage(), e);
+                runOnUiThread(() -> {
+                    trafficSigns.clear(); // Clear the list on failure
+                    trafficSignAdapter.notifyDataSetChanged(); // Refresh the adapter
+                });
+            })
+            .addOnCompleteListener(task -> {
+                // Ensure the list is refreshed every 3 seconds regardless of success or failure
+                refreshHandler.postDelayed(() -> captureAndSendFrame(), REFRESH_INTERVAL);
+            });
     }
 
     private void adjustLayoutForOrientation(int orientation) {
@@ -288,6 +354,28 @@ public class CameraActivity extends AppCompatActivity {
             camera = null;
         }
         frameHandler.removeCallbacks(frameCaptureRunnable);
+        stopAutoRefresh(); // Stop auto-refresh when the activity is paused
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopAutoRefresh(); // Ensure auto-refresh is stopped when the activity is destroyed
+    }
+
+    private void startAutoRefresh() {
+        refreshRunnable = new Runnable() {
+            @Override
+            public void run() {
+                captureAndSendFrame(); // Capture and send frame to the server
+                refreshHandler.postDelayed(this, REFRESH_INTERVAL); // Schedule the next refresh
+            }
+        };
+        refreshHandler.post(refreshRunnable);
+    }
+
+    private void stopAutoRefresh() {
+        refreshHandler.removeCallbacks(refreshRunnable); // Stop the refresh handler
     }
 
     @Override
