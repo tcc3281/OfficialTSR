@@ -21,6 +21,7 @@ import com.example.officialtsr.R;
 import com.example.officialtsr.activities.AccountActivity;
 import com.example.officialtsr.adapters.SettingsAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SettingsFragment extends Fragment {
 
@@ -89,19 +90,37 @@ public class SettingsFragment extends Fragment {
 
     private void navigateToAccountFragment() {
         FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
         if (auth.getCurrentUser() != null) {
-            Bundle bundle = new Bundle();
-            bundle.putString("fullName", auth.getCurrentUser().getDisplayName());
-            bundle.putString("email", auth.getCurrentUser().getEmail());
-            bundle.putString("photoUrl", auth.getCurrentUser().getPhotoUrl() != null ? auth.getCurrentUser().getPhotoUrl().toString() : null);
+            String uid = auth.getCurrentUser().getUid();
 
-            AccountFragment accountFragment = new AccountFragment();
-            accountFragment.setArguments(bundle);
+            firestore.collection("users").document(uid).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String fullName = documentSnapshot.getString("displayName");
+                        String email = documentSnapshot.getString("email");
+                        String photoUrl = documentSnapshot.getString("photoURL");
 
-            getParentFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, accountFragment)
-                .addToBackStack(null)
-                .commit();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("fullName", fullName != null ? fullName : "N/A");
+                        bundle.putString("email", email != null ? email : "N/A");
+                        bundle.putString("photoUrl", photoUrl);
+
+                        AccountFragment accountFragment = new AccountFragment();
+                        accountFragment.setArguments(bundle);
+
+                        getParentFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, accountFragment)
+                            .addToBackStack(null)
+                            .commit();
+                    } else {
+                        Toast.makeText(requireContext(), "Không tìm thấy thông tin tài khoản", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(requireContext(), "Lỗi khi lấy thông tin tài khoản: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
         } else {
             Toast.makeText(requireContext(), "Không có thông tin tài khoản", Toast.LENGTH_SHORT).show();
         }

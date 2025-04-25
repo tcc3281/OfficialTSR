@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -20,18 +21,28 @@ import com.example.officialtsr.fragments.ListFragment;
 import com.example.officialtsr.fragments.MainFragment;
 import com.example.officialtsr.R;
 import com.example.officialtsr.fragments.SettingsFragment;
+import com.example.officialtsr.models.TrafficSign;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
     private AuthManager authManager;
+    private List<TrafficSign> cachedTrafficSigns = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d("MainActivity", "onCreate called"); // Log để kiểm tra
+
         // Apply Dark Mode based on saved preferences
         SharedPreferences preferences = getSharedPreferences("settings", Context.MODE_PRIVATE);
         boolean isDarkMode = preferences.getBoolean("dark_mode", false);
@@ -39,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
             isDarkMode ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
         );
 
-        super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
@@ -79,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             bottomNavigationView.setSelectedItemId(R.id.nav_main);
         }
+
+        loadTrafficSigns(); // Load traffic signs once
     }
 
     public void updateNotificationIcon(boolean isDarkMode) {
@@ -87,6 +99,50 @@ public class MainActivity extends AppCompatActivity {
             // Reverse the logic: use black for dark mode and white for light mode
             notificationIcon.setImageResource(isDarkMode ? R.drawable.ic_bell_black : R.drawable.ic_bell_white);
         }
+    }
+
+    private void loadTrafficSigns() {
+        if (!cachedTrafficSigns.isEmpty()) return; // Skip if already loaded
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("TrafficSign")
+            .orderBy("SIGN_NAME", Query.Direction.ASCENDING)
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                cachedTrafficSigns.clear();
+                queryDocumentSnapshots.forEach(document -> {
+                    String imageLink = document.getString("IMAGE_LINK");
+                    String lawId = document.getString("LAW_ID");
+                    String signName = document.getString("SIGN_NAME");
+                    String type = document.getString("TYPE");
+                    String description = document.getString("DESCRIPTION");
+                    String label = document.getString("LABEL"); // Fetch label field
+
+                    if (imageLink != null && lawId != null && signName != null && type != null) {
+                        cachedTrafficSigns.add(new TrafficSign(
+                            null,
+                            description != null ? description : "No description available",
+                            imageLink,
+                            lawId,
+                            signName,
+                            type,
+                            label // Pass label field
+                        ));
+                    }
+                });
+            })
+            .addOnFailureListener(e -> {
+                Toast.makeText(this, "Failed to load traffic signs: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            });
+    }
+
+    public List<TrafficSign> getCachedTrafficSigns() {
+        return cachedTrafficSigns;
+    }
+
+    public void saveTrafficSigns(List<TrafficSign> trafficSigns) {
+        cachedTrafficSigns.clear();
+        cachedTrafficSigns.addAll(trafficSigns);
     }
 
     private void logout() {

@@ -1,52 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- Avatar -->
     <ImageView
-        android:id="@+id/account_profile_image"
+        android:id="@+id/avatar_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/ic_account_placeholder"
-        android:contentDescription="Profile Picture"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/ic_launcher_foreground"
+        android:layout_gravity="center"
         android:layout_marginBottom="16dp" />
 
-    <TextView
-        android:id="@+id/account_full_name"
-        android:layout_width="wrap_content"
+    <!-- Account Info Display -->
+    <LinearLayout
+        android:id="@+id/account_info_display"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Full Name"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/account_profile_image"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="8dp" />
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp">
 
-    <TextView
-        android:id="@+id/account_email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Email"
-        android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/account_full_name"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="8dp" />
+        <TextView
+            android:id="@+id/display_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Email: example@example.com"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp" />
 
-    <TextView
-        android:id="@+id/account_phone"
+        <TextView
+            android:id="@+id/display_first_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="First Name: John"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/display_last_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Last Name: Doe"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/display_date_of_birth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Date of Birth: 1990-01-01"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <!-- Edit Button -->
+    <Button
+        android:id="@+id/btn_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Phone Number"
-        android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/account_email"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:text="Edit"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Form for editing -->
+    <LinearLayout
+        android:id="@+id/edit_form"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <!-- Change Avatar Button -->
+        <Button
+            android:id="@+id/btn_change_avatar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Change Avatar"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/input_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:layout_marginBottom="8dp"
+            android:enabled="false" />
+
+        <EditText
+            android:id="@+id/input_first_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="First Name"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/input_last_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Last Name"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/input_date_of_birth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Date of Birth (YYYY-MM-DD)"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save" />
+
+        <Button
+            android:id="@+id/btn_change_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Change Password"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+</LinearLayout>

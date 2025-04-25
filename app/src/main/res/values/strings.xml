@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">TSR</string>
     <string name="default_web_client_id">DEFAULT_CLIENT_ID</string>
+    <string name="login_success">Đăng nhập thành công</string>
+    <string name="login_failed">Đăng nhập thất bại</string>
+    <string name="invalid_credentials">Thông tin đăng nhập không hợp lệ</string>
+    <string name="user_not_found">Không tìm thấy người dùng hiện tại</string>
 </resources>

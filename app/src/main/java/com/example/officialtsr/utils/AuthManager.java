@@ -20,8 +20,8 @@ public class AuthManager {
 
     public void saveLoginState(boolean isLoggedIn, String idToken) {
         sharedPreferences.edit()
-                .putBoolean(KEY_IS_LOGGED_IN, isLoggedIn)
-                .putString(KEY_ID_TOKEN, idToken)
+                .putBoolean(KEY_IS_LOGGED_IN, isLoggedIn) // Lưu trạng thái đăng nhập
+                .putString(KEY_ID_TOKEN, idToken != null ? idToken : "") // Lưu token nếu có
                 .apply();
     }
 

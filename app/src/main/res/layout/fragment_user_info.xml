@@ -1,18 +1,9 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="24dp"
-    android:gravity="center"
-    android:background="@color/white">
-
-    <ImageView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:src="@drawable/ic_google_logo"
-        android:contentDescription="App Logo"
-        android:layout_marginBottom="32dp" />
+    android:padding="16dp">
 
     <EditText
         android:id="@+id/input_email"
@@ -20,7 +11,7 @@
         android:layout_height="wrap_content"
         android:hint="Email"
         android:inputType="textEmailAddress"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="8dp" />
 
     <EditText
         android:id="@+id/input_password"
@@ -28,26 +19,28 @@
         android:layout_height="wrap_content"
         android:hint="Mật khẩu"
         android:inputType="textPassword"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/input_display_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Tên hiển thị"
+        android:inputType="textPersonName"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/input_date_of_birth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Ngày sinh (dd/MM/yyyy)"
+        android:focusable="false"
+        android:clickable="true"
         android:layout_marginBottom="16dp" />
 
     <Button
-        android:id="@+id/btn_email_sign_in"
+        android:id="@+id/btn_save_user_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Đăng nhập bằng Email"
-        android:layout_marginBottom="16dp" />
-
-    <Button
-        android:id="@+id/btn_email_register"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Đăng ký bằng Email"
-        android:layout_marginBottom="16dp" />
-
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/btn_google_sign_in"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp" />
-
+        android:text="Submit" />
 </LinearLayout>
