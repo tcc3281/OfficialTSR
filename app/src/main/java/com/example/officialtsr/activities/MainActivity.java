@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
                     String signName = document.getString("SIGN_NAME");
                     String type = document.getString("TYPE");
                     String description = document.getString("DESCRIPTION");
+                    String label = document.getString("LABEL"); // Fetch label field
 
                     if (imageLink != null && lawId != null && signName != null && type != null) {
                         cachedTrafficSigns.add(new TrafficSign(
@@ -124,7 +125,8 @@ public class MainActivity extends AppCompatActivity {
                             imageLink,
                             lawId,
                             signName,
-                            type
+                            type,
+                            label // Pass label field
                         ));
                     }
                 });

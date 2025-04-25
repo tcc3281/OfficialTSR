@@ -75,6 +75,7 @@ public class ListFragment extends Fragment {
                         String signName = document.getString("SIGN_NAME");
                         String type = document.getString("TYPE");
                         String description = document.getString("DESCRIPTION");
+                        String label = document.getString("LABEL"); // Fetch new field
 
                         if (imageLink != null && lawId != null && signName != null && type != null) {
                             trafficSigns.add(new TrafficSign(
@@ -83,7 +84,8 @@ public class ListFragment extends Fragment {
                                 imageLink,
                                 lawId,
                                 signName,
-                                type
+                                type,
+                                label // Pass new field
                             ));
                         }
                     });
@@ -114,6 +116,7 @@ public class ListFragment extends Fragment {
         bundle.putString("signName", trafficSign.getSignName());
         bundle.putString("type", trafficSign.getType());
         bundle.putString("description", trafficSign.getDescription());
+        bundle.putString("label", trafficSign.getLabel()); // Pass label
         detailsFragment.setArguments(bundle);
 
         requireActivity().getSupportFragmentManager().beginTransaction()
