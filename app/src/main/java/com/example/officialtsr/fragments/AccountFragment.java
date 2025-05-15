@@ -136,8 +136,8 @@ public class AccountFragment extends Fragment {
                 lastNameInput.setText(lastName);
                 dateOfBirthInput.setText(dateOfBirth);
 
-                displayFirstName.setText("First Name: " + firstName);
-                displayLastName.setText("Last Name: " + lastName);
+                displayFirstName.setText(firstName);
+                displayLastName.setText(lastName);
                 displayDateOfBirth.setText("Date of Birth: " + dateOfBirth);
             } else {
                 Toast.makeText(getContext(), "User data not found", Toast.LENGTH_SHORT).show();

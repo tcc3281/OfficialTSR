@@ -21,7 +21,6 @@ import com.example.officialtsr.fragments.ListFragment;
 import com.example.officialtsr.fragments.MainFragment;
 import com.example.officialtsr.R;
 import com.example.officialtsr.fragments.SettingsFragment;
-import com.example.officialtsr.fragments.TestFragment;
 import com.example.officialtsr.models.TrafficSign;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
