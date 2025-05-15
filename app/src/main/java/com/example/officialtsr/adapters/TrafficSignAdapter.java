@@ -39,38 +39,92 @@ public class TrafficSignAdapter extends RecyclerView.Adapter<TrafficSignAdapter.
     public TrafficSignViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_traffic_sign, parent, false);
         return new TrafficSignViewHolder(view);
-    }
-
-    @Override
+    }    @Override
     public void onBindViewHolder(@NonNull TrafficSignViewHolder holder, int position) {
         TrafficSign trafficSign = trafficSigns.get(position);
-        holder.lawIdTextView.setText(trafficSign.getLawId());
-        holder.signNameTextView.setText(trafficSign.getSignName());
-        Glide.with(context).load(trafficSign.getImageLink()).into(holder.imageView);
+        
+        // Hiển thị mã luật và tên biển báo
+        String lawId = trafficSign.getLawId();
+        if (lawId != null) {
+            holder.lawIdTextView.setText(lawId);
+            holder.lawIdTextView.setVisibility(View.VISIBLE);
+        } else {
+            holder.lawIdTextView.setText("");
+            holder.lawIdTextView.setVisibility(View.GONE);
+        }
+        
+        String signName = trafficSign.getSignName();
+        if (signName != null) {
+            holder.signNameTextView.setText(signName);
+        } else {
+            holder.signNameTextView.setText(trafficSign.getLabel() != null ? 
+                trafficSign.getLabel() : "Biển báo không xác định");
+        }
+        
+        // Set color based on category
+        String category = trafficSign.getType();
+        int categoryColor = getCategoryColor(category);  // Phương thức đã được sửa để xử lý null
+        holder.categoryIndicator.setBackgroundColor(categoryColor);
+        holder.categoryIndicator.setVisibility(View.VISIBLE);
+        
+        // Load image with rounded corners using Glide
+        String imageUrl = trafficSign.getImageLink();
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            Glide.with(context)
+                .load(imageUrl)
+                .placeholder(R.drawable.user) // Hình placeholder
+                .error(R.drawable.user) // Hình lỗi
+                .centerCrop()
+                .into(holder.imageView);
+        } else {
+            // Nếu không có URL hình, dùng placeholder
+            holder.imageView.setImageResource(R.drawable.user);
+        }
 
-        // Dynamically set text color for LAW_ID based on dark mode
-        int nightModeFlags = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        boolean isDarkMode = nightModeFlags == Configuration.UI_MODE_NIGHT_YES;
-        holder.lawIdTextView.setTextColor(isDarkMode ? Color.WHITE : Color.BLACK);
-
-        holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(trafficSign));
+        // Apply ripple effect when clicked
+        holder.itemView.setOnClickListener(v -> {
+            onItemClickListener.onItemClick(trafficSign);
+        });
+    }
+    
+    /**
+     * Get color based on traffic sign category
+     */    private int getCategoryColor(String category) {
+        // Check if category is null to avoid NullPointerException
+        if (category == null) {
+            return context.getResources().getColor(R.color.accent); // Default color when type is null
+        }
+        
+        // Return different colors based on category
+        switch (category.toLowerCase()) {
+            case "warning":
+                return context.getResources().getColor(R.color.warning);
+            case "prohibition":
+                return context.getResources().getColor(R.color.error);
+            case "mandatory":
+                return context.getResources().getColor(R.color.primary);
+            case "information":
+                return context.getResources().getColor(R.color.info);
+            default:
+                return context.getResources().getColor(R.color.accent);
+        }
     }
 
     @Override
     public int getItemCount() {
         return trafficSigns.size();
-    }
-
-    static class TrafficSignViewHolder extends RecyclerView.ViewHolder {
+    }    static class TrafficSignViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         TextView lawIdTextView;
         TextView signNameTextView;
+        View categoryIndicator;
 
         public TrafficSignViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.traffic_sign_image);
             lawIdTextView = itemView.findViewById(R.id.traffic_sign_law_id);
             signNameTextView = itemView.findViewById(R.id.traffic_sign_name);
+            categoryIndicator = itemView.findViewById(R.id.category_indicator);
         }
     }
 }

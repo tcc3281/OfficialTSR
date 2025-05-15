@@ -1,54 +1,245 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:background="@color/background"
+    app:behavior_peekHeight="320dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <View
+            android:layout_width="32dp"
+            android:layout_height="4dp"
+            android:background="@color/gray"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- ImageView for displaying the traffic sign image -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/bottom_sheet_image"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:scaleType="centerInside"
+            android:background="@color/surface"
+            android:contentDescription="Traffic Sign Image"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.TSR.MediumComponent"
+            app:strokeColor="@color/primary_light"
+            app:strokeWidth="1dp" />
 
         <!-- TextView for displaying LAW_ID -->
         <TextView
             android:id="@+id/bottom_sheet_law_id"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
+            android:textSize="20sp"
             android:textStyle="bold"
+            android:textAlignment="center"
+            android:textColor="@color/primary"
             android:layout_marginBottom="8dp" />
 
         <!-- TextView for displaying SIGN_NAME -->
         <TextView
             android:id="@+id/bottom_sheet_sign_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:textSize="16sp" />
-
-        <!-- TextView for displaying TYPE -->
-        <TextView
-            android:id="@+id/bottom_sheet_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             android:textSize="16sp"
-            android:layout_marginBottom="8dp" />
+            android:textAlignment="center"
+            android:textColor="@color/text_primary" />
 
-        <!-- ImageView for displaying the traffic sign image -->
-        <ImageView
-            android:id="@+id/bottom_sheet_image"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:scaleType="centerCrop"
-            android:contentDescription="Traffic Sign Image"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="16dp" />
-
-        <!-- TextView for displaying DESCRIPTION -->
-        <TextView
-            android:id="@+id/bottom_sheet_description"
-            android:layout_width="wrap_content"
+        <!-- Card for Type -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp" />
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+                
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Loại biển báo"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginBottom="4dp" />
+                    
+                <TextView
+                    android:id="@+id/bottom_sheet_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="@color/text_primary" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>        <!-- Card for Description -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+                
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Mô tả"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginBottom="4dp" />
+                    
+                <TextView
+                    android:id="@+id/bottom_sheet_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="@color/text_primary" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        
+        <!-- Card for Sign Group -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="12dp"
+                android:gravity="center_vertical">
+                
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@android:drawable/ic_menu_slideshow"
+                    android:tint="@color/primary"
+                    android:layout_marginEnd="16dp" />
+                
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Nhóm biển báo"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginBottom="4dp" />
+                        
+                    <TextView
+                        android:id="@+id/bottom_sheet_group"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textColor="@color/text_primary"
+                        android:text="Biển báo cấm" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        
+        <!-- Card for Meaning/Action -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="12dp"
+                android:gravity="center_vertical">
+                
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@android:drawable/ic_dialog_alert"
+                    android:tint="@color/warning"
+                    android:layout_marginEnd="16dp" />
+                
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Yêu cầu người tham gia giao thông"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginBottom="4dp" />
+                        
+                    <TextView
+                        android:id="@+id/bottom_sheet_action_required"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:textColor="@color/text_primary"
+                        android:text="Người tham gia giao thông cần chú ý quan sát và tuân thủ" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+            
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_favorite"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Lưu"
+                android:textAllCaps="false"
+                app:icon="@android:drawable/btn_star"
+                app:iconGravity="textStart"
+                style="@style/Widget.TSR.Button.Outlined"
+                android:layout_marginEnd="8dp" />
+                
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_learn_more"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Xem chi tiết"
+                android:textAllCaps="false"
+                app:icon="@android:drawable/ic_menu_info_details"
+                app:iconGravity="textStart"
+                style="@style/Widget.TSR.Button" />
+        </LinearLayout>
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

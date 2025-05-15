@@ -172,10 +172,10 @@ public class AccountFragment extends Fragment {
 
         // Show DatePickerDialog when clicking on dateOfBirthInput
         dateOfBirthInput.setOnClickListener(v -> showDatePicker());
-    }
-
-    private void switchToEditMode() {
-        editForm.setVisibility(View.VISIBLE);
+    }    private void switchToEditMode() {
+        // Find the edit form card
+        View editFormCard = getView().findViewById(R.id.edit_form_card);
+        editFormCard.setVisibility(View.VISIBLE);
         editButton.setVisibility(View.GONE);
     }
 
