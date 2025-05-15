@@ -1,10 +1,15 @@
 package com.example.officialtsr.fragments;
 
+import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -13,14 +18,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.officialtsr.R;
-import com.example.officialtsr.models.User;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.auth.FirebaseAuth;
-
-import android.app.DatePickerDialog;
-import android.widget.DatePicker;
-import android.content.Intent;
 import com.example.officialtsr.activities.MainActivity;
+import com.example.officialtsr.models.User;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -50,9 +51,28 @@ public class UserInfoFragment extends Fragment {
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
 
-        // Nhận trạng thái "isRegistration" từ Bundle
+        // Get registration state from Bundle
         if (getArguments() != null) {
             isRegistration = getArguments().getBoolean("isRegistration", false);
+        }
+        
+        // Set appropriate UI based on mode
+        if (isRegistration) {
+            // Enable email and password fields for registration
+            emailInput.setEnabled(true);
+            emailInput.setVisibility(View.VISIBLE);
+            passwordInput.setVisibility(View.VISIBLE);
+            
+            // Set button text for registration
+            view.findViewById(R.id.btn_save_user_info).setContentDescription("Register");
+            ((Button)view.findViewById(R.id.btn_save_user_info)).setText("Register");
+        } else {
+            // If updating profile, prefill with existing data if user is logged in
+            if (auth.getCurrentUser() != null) {
+                emailInput.setText(auth.getCurrentUser().getEmail());
+                emailInput.setEnabled(false); // Can't change email when updating
+                passwordInput.setVisibility(View.GONE); // Hide password field when just updating
+            }
         }
 
         dateOfBirthInput.setOnClickListener(v -> showDatePickerDialog());
@@ -105,8 +125,15 @@ public class UserInfoFragment extends Fragment {
             return;
         }
 
+        // Show progress dialog during registration
+        ProgressDialog progressDialog = new ProgressDialog(requireContext());
+        progressDialog.setMessage("Đang đăng ký...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(task -> {
+                progressDialog.dismiss();
                 if (task.isSuccessful()) {
                     String uid = auth.getCurrentUser().getUid();
                     saveUserToFirestore(uid, email, displayName, dateOfBirth);
