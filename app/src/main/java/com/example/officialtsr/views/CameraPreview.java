@@ -84,54 +84,81 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         } catch (IOException e) {
             Log.e(TAG, "Error starting camera preview: " + e.getMessage(), e);
         }
-    }
-
-    private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int width, int height) {
+    }    private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int width, int height) {
         if (sizes == null) return null;
 
-        final double ASPECT_TOLERANCE = 0.1; // Tăng tolerance
+        final double ASPECT_TOLERANCE = 0.2; // Tăng tolerance để tìm kích thước phù hợp hơn
         double targetRatio = (double) width / height;
         Camera.Size optimalSize = null;
         double minDiff = Double.MAX_VALUE;
+        int targetHeight = height;
 
-        // Tìm size phù hợp nhất với tỷ lệ màn hình
+        Log.d(TAG, "Finding optimal size. Target: " + width + "x" + height + " ratio: " + targetRatio);
+        
+        // Ưu tiên tìm kích thước có cùng tỉ lệ với màn hình
         for (Camera.Size size : sizes) {
+            Log.d(TAG, "Checking size " + size.width + "x" + size.height);
             double ratio = (double) size.width / size.height;
+            
             if (Math.abs(ratio - targetRatio) <= ASPECT_TOLERANCE) {
-                if (Math.abs(size.height - height) < minDiff) {
+                if (Math.abs(size.height - targetHeight) < minDiff) {
                     optimalSize = size;
-                    minDiff = Math.abs(size.height - height);
+                    minDiff = Math.abs(size.height - targetHeight);
+                    Log.d(TAG, "Found better size: " + size.width + "x" + size.height);
                 }
             }
         }
 
-        // Nếu không tìm thấy, chọn size gần nhất
+        // Nếu không tìm được kích thước phù hợp, thử tìm kích thước với chiều cao gần nhất
         if (optimalSize == null) {
+            Log.d(TAG, "No optimal size with target ratio, looking for closest match");
             minDiff = Double.MAX_VALUE;
             for (Camera.Size size : sizes) {
-                if (Math.abs(size.height - height) < minDiff) {
+                if (Math.abs(size.height - targetHeight) < minDiff) {
                     optimalSize = size;
-                    minDiff = Math.abs(size.height - height);
+                    minDiff = Math.abs(size.height - targetHeight);
+                    Log.d(TAG, "Found size by height: " + size.width + "x" + size.height);
                 }
             }
         }
+        
+        if (optimalSize != null) {
+            Log.d(TAG, "Selected optimal size: " + optimalSize.width + "x" + optimalSize.height);
+        }
+        
         return optimalSize;
-    }
-
-    private void adjustSurfaceView(Camera.Size previewSize, int viewWidth, int viewHeight) {
+    }    private void adjustSurfaceView(Camera.Size previewSize, int viewWidth, int viewHeight) {
         float previewRatio = (float) previewSize.width / previewSize.height;
         float viewRatio = (float) viewWidth / viewHeight;
 
+        Log.d(TAG, "Adjusting surface view. Preview size: " + previewSize.width + "x" + previewSize.height + 
+              " View size: " + viewWidth + "x" + viewHeight);
+        Log.d(TAG, "Ratios - Preview: " + previewRatio + " View: " + viewRatio);
+
+        // Lưu các kích thước ban đầu để tránh vấn đề khi gọi requestLayout() nhiều lần
+        int originalWidth = getLayoutParams().width;
+        int originalHeight = getLayoutParams().height;
+        
+        // Áp dụng tỷ lệ phù hợp để giữ khung hình camera hiển thị đầy đủ và không bị kéo méo
         if (previewRatio > viewRatio) {
-            // Preview rộng hơn view, điều chỉnh chiều cao
+            // Preview rộng hơn view, giữ chiều rộng và điều chỉnh chiều cao
             int adjustedHeight = (int) (viewWidth / previewRatio);
+            Log.d(TAG, "Preview wider than view, adjusting height to: " + adjustedHeight);
             getLayoutParams().height = adjustedHeight;
+            getLayoutParams().width = viewWidth;
         } else {
-            // Preview cao hơn view, điều chỉnh chiều rộng
+            // Preview cao hơn hoặc bằng view, giữ chiều cao và điều chỉnh chiều rộng
             int adjustedWidth = (int) (viewHeight * previewRatio);
+            Log.d(TAG, "Preview taller than view, adjusting width to: " + adjustedWidth);
             getLayoutParams().width = adjustedWidth;
+            getLayoutParams().height = viewHeight;
         }
-        requestLayout();
+        
+        // Kiểm tra nếu kích thước thay đổi thì mới cần requestLayout
+        if (originalWidth != getLayoutParams().width || originalHeight != getLayoutParams().height) {
+            Log.d(TAG, "Layout changed, requesting layout update");
+            requestLayout();
+        }
     }
 
     private void setCameraDisplayOrientation() {
