@@ -38,6 +38,9 @@ import java.util.UUID;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import android.util.Log;
 
 public class AccountFragment extends Fragment {
 
@@ -106,6 +109,11 @@ public class AccountFragment extends Fragment {
         emailInput.setInputType(InputType.TYPE_NULL); // Make email non-editable
         displayEmail.setText("Email: " + currentUser.getEmail());
 
+        // Set default avatar first to avoid glitches
+        Glide.with(this)
+            .load(R.drawable.user)
+            .into(avatarImage);
+
         // Load other user data from Firestore
         userDocRef.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
@@ -115,9 +123,15 @@ public class AccountFragment extends Fragment {
                 String dateOfBirth = documentSnapshot.getString("dateOfBirth");
 
                 // Set data to views
-                if (avatarUrl != null) {
-                    Glide.with(this).load(avatarUrl).into(avatarImage);
+                if (avatarUrl != null && !avatarUrl.isEmpty()) {
+                    // If user has a custom avatar, load it
+                    Glide.with(this)
+                        .load(avatarUrl)
+                        .placeholder(R.drawable.user)
+                        .error(R.drawable.user)
+                        .into(avatarImage);
                 }
+                
                 firstNameInput.setText(firstName);
                 lastNameInput.setText(lastName);
                 dateOfBirthInput.setText(dateOfBirth);
@@ -181,18 +195,46 @@ public class AccountFragment extends Fragment {
 
     private void showDatePicker() {
         // Get current date
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        Calendar currentDate = Calendar.getInstance();
+        
+        // Calculate minimum date (5 years ago from now)
+        Calendar minAgeDate = Calendar.getInstance();
+        minAgeDate.add(Calendar.YEAR, -5);
+        
+        int year = currentDate.get(Calendar.YEAR);
+        int month = currentDate.get(Calendar.MONTH);
+        int day = currentDate.get(Calendar.DAY_OF_MONTH);
 
         // Show DatePickerDialog
         DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
                 (view, selectedYear, selectedMonth, selectedDay) -> {
-                    // Set selected date to dateOfBirthInput in dd/MM/yyyy format
-                    String selectedDate = String.format("%02d/%02d/%04d", selectedDay, (selectedMonth + 1), selectedYear);
-                    dateOfBirthInput.setText(selectedDate);
+                    // Create a calendar with the selected date
+                    Calendar selectedDate = Calendar.getInstance();
+                    selectedDate.set(selectedYear, selectedMonth, selectedDay);
+                    
+                    // Check if selected date meets minimum age requirement (5 years)
+                    if (selectedDate.after(minAgeDate)) {
+                        Toast.makeText(getContext(), "Bạn phải đủ 5 tuổi!", Toast.LENGTH_SHORT).show();
+                        
+                        // Reset to minimum allowed date (exactly 5 years ago)
+                        selectedYear = minAgeDate.get(Calendar.YEAR);
+                        selectedMonth = minAgeDate.get(Calendar.MONTH);
+                        selectedDay = minAgeDate.get(Calendar.DAY_OF_MONTH);
+                    }
+                    
+                    // Format date as dd/MM/yyyy
+                    String formattedDate = String.format("%02d/%02d/%04d", selectedDay, (selectedMonth + 1), selectedYear);
+                    dateOfBirthInput.setText(formattedDate);
                 }, year, month, day);
+        
+        // Set max date to current date (cannot select future dates)
+        datePickerDialog.getDatePicker().setMaxDate(currentDate.getTimeInMillis());
+        
+        // Set min date to 100 years ago (reasonable age limit)
+        Calendar hundredYearsAgo = Calendar.getInstance();
+        hundredYearsAgo.add(Calendar.YEAR, -100);
+        datePickerDialog.getDatePicker().setMinDate(hundredYearsAgo.getTimeInMillis());
+        
         datePickerDialog.show();
     }
 
@@ -214,6 +256,12 @@ public class AccountFragment extends Fragment {
 
         if (!isValidDateOfBirth(dateOfBirth)) {
             Toast.makeText(getContext(), "Invalid date of birth. Use format dd/MM/yyyy.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        // Validate minimum age requirement (5 years)
+        if (!isUserOldEnough(dateOfBirth)) {
+            Toast.makeText(getContext(), "Bạn phải đủ 5 tuổi!", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -350,5 +398,25 @@ public class AccountFragment extends Fragment {
                 Toast.makeText(getContext(), "Re-authentication failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    // Add method to check if user meets minimum age requirement
+    private boolean isUserOldEnough(String dateOfBirthStr) {
+        try {
+            // Parse the date string in format dd/MM/yyyy
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            Calendar birthDate = Calendar.getInstance();
+            birthDate.setTime(sdf.parse(dateOfBirthStr));
+            
+            // Calculate minimum allowed birth date (5 years ago)
+            Calendar minAgeDate = Calendar.getInstance();
+            minAgeDate.add(Calendar.YEAR, -5);
+            
+            // Check if birth date is before or equal to the minimum age date
+            return birthDate.before(minAgeDate) || birthDate.equals(minAgeDate);
+        } catch (Exception e) {
+            Log.e("AccountFragment", "Date parsing error: " + e.getMessage());
+            return false;
+        }
     }
 }
