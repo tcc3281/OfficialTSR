@@ -1,29 +1,101 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@color/background">
 
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/camera_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/primary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:title="Camera Detection"
+        app:titleTextColor="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />    <!-- Camera Preview Frame -->
     <FrameLayout
         android:id="@+id/camera_preview"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_gravity="center" />
+        android:background="@android:color/black"
+        app:layout_constraintTop_toBottomOf="@id/camera_toolbar"
+        app:layout_constraintBottom_toTopOf="@id/result_list"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.5" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/result_list"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="1dp" />
-
-    <Button
-        android:id="@+id/btn_send_frame"
+    <!-- Recognition status overlay -->
+    <TextView
+        android:id="@+id/recognition_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send Frame"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="16dp" />
-</LinearLayout>
+        android:text="Scanning for traffic signs..."
+        android:textColor="@color/white"
+        android:background="#80000000"
+        android:padding="12dp"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/camera_toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <!-- Result List Title -->
+    <TextView
+        android:id="@+id/result_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Detected Signs"
+        android:textSize="16sp"
+        android:textColor="@color/text_primary"
+        android:textStyle="bold"
+        android:padding="12dp"
+        android:background="@color/surface"
+        android:elevation="2dp"
+        app:layout_constraintTop_toBottomOf="@id/camera_preview"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Results List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/result_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:padding="8dp"
+        android:background="@color/surface"
+        app:layout_constraintTop_toBottomOf="@id/result_title"
+        app:layout_constraintBottom_toTopOf="@id/bottom_actions"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Bottom Action Bar -->
+    <LinearLayout
+        android:id="@+id/bottom_actions"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="12dp"
+        android:background="@color/surface"
+        android:elevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_send_frame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Capture Frame"
+            android:textAllCaps="false"
+            app:icon="@android:drawable/ic_menu_camera"
+            app:iconGravity="textStart"
+            style="@style/Widget.TSR.Button" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

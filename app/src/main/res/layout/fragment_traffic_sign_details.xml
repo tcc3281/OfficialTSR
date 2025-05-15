@@ -1,49 +1,151 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="@color/background"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <ImageView
-            android:id="@+id/details_image"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:scaleType="centerCrop"
-            android:contentDescription="Traffic Sign Image"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="16dp" />
-
-        <TextView
-            android:id="@+id/details_law_id"
-            android:layout_width="wrap_content"
+        <!-- Header Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
-
-        <TextView
-            android:id="@+id/details_sign_name"
-            android:layout_width="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="3dp"
+            app:cardUseCompatPadding="true">
+            
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+                
+                <!-- Image and ID side by side -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
+                    
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/details_image"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:scaleType="centerInside"
+                        android:contentDescription="Traffic Sign Image"
+                        android:background="@color/surface"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearance.TSR.MediumComponent"
+                        app:strokeColor="@color/primary"
+                        app:strokeWidth="2dp" />
+                        
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="16dp"
+                        android:layout_gravity="center_vertical">
+                        
+                        <TextView
+                            android:id="@+id/details_law_id"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="22sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/primary"
+                            android:layout_marginBottom="8dp" />
+                            
+                        <TextView
+                            android:id="@+id/details_sign_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:textSize="16sp"
+                            android:textColor="@color/text_primary" />
+                            
+                        <TextView
+                            android:id="@+id/details_type"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="14sp"
+                            android:textColor="@color/text_secondary"
+                            android:background="@drawable/pill_background"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:paddingTop="4dp"
+                            android:paddingBottom="4dp" />
+                    </LinearLayout>
+                </LinearLayout>
+                
+                <!-- Description section -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Mô tả"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:layout_marginBottom="8dp" />
+                    
+                <TextView
+                    android:id="@+id/details_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:textColor="@color/text_primary"
+                    android:lineSpacingExtra="4dp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        
+        <!-- Additional Information Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/details_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp" />
-
-        <TextView
-            android:id="@+id/details_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp" />
+            app:cardCornerRadius="12dp"
+            app:cardElevation="3dp"
+            app:cardUseCompatPadding="true">
+            
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+                
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Thông tin bổ sung"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:layout_marginBottom="8dp" />
+                    
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Luật giao thông đường bộ"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginBottom="4dp" />
+                    
+                <TextView
+                    android:id="@+id/details_law_reference"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Điều 10, Luật Giao thông đường bộ 2008"
+                    android:textSize="15sp"
+                    android:textColor="@color/text_primary"
+                    android:layout_marginBottom="12dp" />
+                    
+                <!-- Additional information can be added here -->
+                
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>
