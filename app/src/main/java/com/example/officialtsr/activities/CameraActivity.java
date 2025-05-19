@@ -17,6 +17,8 @@ import android.widget.Toast;
 import android.content.res.Configuration;
 import android.widget.LinearLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -52,9 +54,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CameraActivity extends AppCompatActivity {
-
-    private static final String TAG = "CameraActivity";
+public class CameraActivity extends AppCompatActivity {    private static final String TAG = "CameraActivity";
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     private static final int FRAME_INTERVAL = 5000; // 5 seconds
     private static final int REFRESH_INTERVAL = 5000; // 5 seconds
@@ -63,7 +63,6 @@ public class CameraActivity extends AppCompatActivity {
     private CameraPreview cameraPreview;
     private Handler frameHandler = new Handler(Looper.getMainLooper());
     private Runnable frameCaptureRunnable;
-    private Button sendButton;
     private RecyclerView resultRecyclerView;
     private TrafficSignAdapter trafficSignAdapter;
     private List<TrafficSign> trafficSigns = new ArrayList<>();
@@ -83,8 +82,7 @@ public class CameraActivity extends AppCompatActivity {
         });
         resultRecyclerView.setAdapter(trafficSignAdapter);
 
-        sendButton = findViewById(R.id.btn_send_frame);
-        sendButton.setOnClickListener(v -> captureAndSendFrame());
+
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
@@ -144,15 +142,22 @@ public class CameraActivity extends AppCompatActivity {
             result = (info.orientation - degrees + 360) % 360;
         }
         camera.setDisplayOrientation(result);
-    }
-
-    private void startFrameCapture() {
+    }    private void startFrameCapture() {
         frameCaptureRunnable = new Runnable() {
             @Override
             public void run() {
                 if (camera != null) {
+                    runOnUiThread(() -> {
+                        // Cập nhật trạng thái để người dùng biết đang xử lý
+                        TextView statusText = findViewById(R.id.recognition_status);
+                        if (statusText != null) {                            statusText.setText("Đang quét biển báo...");
+                            statusText.setVisibility(View.VISIBLE);
+                        }
+                    });
+                    
                     camera.setOneShotPreviewCallback((data, camera) -> {
                         try {
+                            Log.d(TAG, "Capturing frame automatically at interval: " + FRAME_INTERVAL + "ms");
                             Camera.Parameters parameters = camera.getParameters();
                             Camera.Size size = parameters.getPreviewSize();
                             YuvImage yuvImage = new YuvImage(data, parameters.getPreviewFormat(), size.width, size.height, null);
@@ -168,8 +173,8 @@ public class CameraActivity extends AppCompatActivity {
 
                             Log.d(TAG, "Temp file created: " + tempFile.exists() + " at " + tempFile.getAbsolutePath());
 
-                            // Compress the image
-                            File compressedImage = ImageCompressor.compressImage(CameraActivity.this, Uri.fromFile(tempFile), 0.8f, 800);
+                            // Compress the image with higher quality (0.9f) để có chất lượng tốt hơn
+                            File compressedImage = ImageCompressor.compressImage(CameraActivity.this, Uri.fromFile(tempFile), 0.9f, 1200);
 
                             Log.d(TAG, "Compressed file exists: " + (compressedImage != null && compressedImage.exists()));
 
@@ -177,6 +182,12 @@ public class CameraActivity extends AppCompatActivity {
                             sendFrameToServer(compressedImage);
                         } catch (Exception e) {
                             Log.e(TAG, "Error processing frame: " + e.getMessage(), e);
+                            runOnUiThread(() -> {
+                                TextView statusText = findViewById(R.id.recognition_status);
+                                if (statusText != null) {
+                                    statusText.setText("Lỗi xử lý hình ảnh");
+                                }
+                            });
                         }
                     });
                 } else {
@@ -248,77 +259,176 @@ public class CameraActivity extends AppCompatActivity {
                 Log.e(TAG, "Error sending frame: " + t.getMessage(), t);
             }
         });
-    }
-
-    private void handleApiResponse(String responseBody) {
+    }    private void handleApiResponse(String responseBody) {
         try {
             JSONObject jsonResponse = new JSONObject(responseBody);
             JSONArray classificationResults = jsonResponse.optJSONArray("classification_results");
             List<String> detectedLabels = new ArrayList<>();
+            
+            runOnUiThread(() -> {
+                TextView statusText = findViewById(R.id.recognition_status);
+                if (statusText != null) {
+                    statusText.setText("Đang xử lý kết quả...");
+                }
+            });
+            
             if (classificationResults != null && classificationResults.length() > 0) {
+                Log.d(TAG, "Found " + classificationResults.length() + " traffic signs");
                 
                 for (int i = 0; i < classificationResults.length(); i++) {
-                    detectedLabels.add(classificationResults.getString(i)); // Collect all detected labels
+                    String label = classificationResults.getString(i);
+                    Log.d(TAG, "Detected label: " + label);
+                    detectedLabels.add(label); // Collect all detected labels
                 }
+                
+                runOnUiThread(() -> {
+                    TextView resultTitle = findViewById(R.id.result_title);
+                    if (resultTitle != null) {
+                        resultTitle.setText("Phát hiện " + classificationResults.length() + " biển báo");
+                    }
+                });
+                
                 fetchTrafficSignDetails(detectedLabels); // Pass all labels to fetchTrafficSignDetails
             } else {
+                Log.d(TAG, "No traffic signs detected in this frame");
                 runOnUiThread(() -> {
-                    Toast.makeText(this, "No matching traffic signs found", Toast.LENGTH_SHORT).show();
+                    TextView statusText = findViewById(R.id.recognition_status);
+                    if (statusText != null) {
+                        statusText.setText("Không phát hiện biển báo");
+                    }
+                    
+                    TextView resultTitle = findViewById(R.id.result_title);
+                    if (resultTitle != null) {
+                        resultTitle.setText("Không phát hiện biển báo nào");
+                    }
+                    
+                    Toast.makeText(this, "Không tìm thấy biển báo nào", Toast.LENGTH_SHORT).show();
                 });
+                
                 detectedLabels.clear(); // Clear the list if no labels are detected
                 fetchTrafficSignDetails(detectedLabels);
             }
         } catch (Exception e) {
             Log.e(TAG, "Error parsing API response: " + e.getMessage(), e);
+            runOnUiThread(() -> {
+                TextView statusText = findViewById(R.id.recognition_status);
+                if (statusText != null) {
+                    statusText.setText("Lỗi xử lý dữ liệu");
+                }
+            });
         }
-    }
-
-    private void fetchTrafficSignDetails(List<String> labels) {
+    }    private void fetchTrafficSignDetails(List<String> labels) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         trafficSigns.clear(); // Always clear the list to ensure it refreshes
         trafficSignAdapter.notifyDataSetChanged(); // Notify adapter immediately to reflect the empty state
 
+        // Cập nhật UI để hiển thị trạng thái tìm kiếm
+        runOnUiThread(() -> {
+            TextView statusText = findViewById(R.id.recognition_status);
+            if (statusText != null) {
+                if (labels.isEmpty()) {
+                    statusText.setText("Không tìm thấy biển báo");
+                } else {
+                    statusText.setText("Đang tìm thông tin biển báo...");
+                }
+            }
+        });
+
         if (labels.isEmpty()) {
             Log.d(TAG, "No labels detected by the API.");
+            // Lập lịch cho lần gọi API tiếp theo
+            refreshHandler.removeCallbacksAndMessages(null);
+            refreshHandler.postDelayed(() -> captureAndSendFrame(), REFRESH_INTERVAL);
             return; // No labels to query, exit early
         }
 
+        Log.d(TAG, "Fetching details for " + labels.size() + " labels: " + labels.toString());
+        
         db.collection("TrafficSign")
             .whereIn("LABEL", labels) // Query for all matching labels
             .get()
             .addOnSuccessListener(queryDocumentSnapshots -> {
                 if (!queryDocumentSnapshots.isEmpty()) {
-                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        String name = document.getString("SIGN_NAME");
+                    Log.d(TAG, "Found " + queryDocumentSnapshots.size() + " traffic signs in Firestore");
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {                        String name = document.getString("SIGN_NAME");
                         String description = document.getString("DESCRIPTION");
                         String imageLink = document.getString("IMAGE_LINK");
                         String lawId = document.getString("LAW_ID");
                         String label = document.getString("LABEL");
+                        String type = document.getString("TYPE");  // Thêm loại biển báo
+                        
+                        // Nếu không có TYPE trong Firestore, phân loại dựa trên mã biển báo
+                        if (type == null && label != null) {
+                            // Phân loại dựa vào prefix của label (P: prohibition, W: warning, I: information, R: regulatory)
+                            if (label.startsWith("P")) {
+                                type = "prohibition";
+                            } else if (label.startsWith("W")) {
+                                type = "warning";
+                            } else if (label.startsWith("I")) {
+                                type = "information";
+                            } else if (label.startsWith("R")) {
+                                type = "mandatory";
+                            } else {
+                                type = "other";
+                            }
+                        }
 
+                        Log.d(TAG, "Adding sign: " + name + " with label: " + label + ", type: " + type);
+                        
                         trafficSigns.add(new TrafficSign(
                             name,
                             description,
                             imageLink,
                             lawId,
                             name,
-                            null,
+                            type,  // Sử dụng loại biển báo đã xác định
                             label
                         ));
                     }
+                    
+                    runOnUiThread(() -> {
+                        TextView statusText = findViewById(R.id.recognition_status);
+                        if (statusText != null) {
+                            statusText.setText("Đã tìm thấy " + trafficSigns.size() + " biển báo");
+                        }
+                        
+                        TextView resultTitle = findViewById(R.id.result_title);
+                        if (resultTitle != null) {
+                            resultTitle.setText("Danh sách " + trafficSigns.size() + " biển báo");
+                        }
+                        
+                        trafficSignAdapter.notifyDataSetChanged(); // Refresh the adapter
+                    });
                 } else {
                     Log.d(TAG, "No matching traffic signs found in Firestore.");
+                    runOnUiThread(() -> {
+                        TextView statusText = findViewById(R.id.recognition_status);
+                        if (statusText != null) {
+                            statusText.setText("Không tìm thấy thông tin biển báo");
+                        }
+                        
+                        TextView resultTitle = findViewById(R.id.result_title);
+                        if (resultTitle != null) {
+                            resultTitle.setText("Không có thông tin biển báo");
+                        }
+                    });
                 }
-                runOnUiThread(() -> trafficSignAdapter.notifyDataSetChanged()); // Refresh the adapter
             })
             .addOnFailureListener(e -> {
                 Log.e(TAG, "Error fetching traffic sign details: " + e.getMessage(), e);
                 runOnUiThread(() -> {
+                    TextView statusText = findViewById(R.id.recognition_status);
+                    if (statusText != null) {
+                        statusText.setText("Lỗi kết nối cơ sở dữ liệu");
+                    }
+                    
                     trafficSigns.clear(); // Clear the list on failure
                     trafficSignAdapter.notifyDataSetChanged(); // Refresh the adapter
                 });
             })
             .addOnCompleteListener(task -> {
-                // Ensure the list is refreshed every 3 seconds regardless of success or failure
+                // Lập lịch cho lần gọi API tiếp theo, đặt lại mỗi 5 giây để đảm bảo tần suất chính xác
+                refreshHandler.removeCallbacksAndMessages(null);
                 refreshHandler.postDelayed(() -> captureAndSendFrame(), REFRESH_INTERVAL);
             });
     }

@@ -4,4 +4,26 @@
     <color name="white">#FFFFFFFF</color>
     <color name="blue">#1877F2</color>
     <color name="gray">#B0B0B0</color>
+    
+    <!-- New color palette -->    <color name="primary">#2196F3</color>
+    <color name="primary_dark">#1976D2</color>
+    <color name="primary_light">#BBDEFB</color>
+    <color name="secondary">#FF4081</color> <!-- Added for compatibility -->
+    <color name="accent">#FF4081</color>
+    <color name="accent_light">#FF80AB</color>    <color name="text">#212121</color> <!-- Added for compatibility -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="divider">#BDBDBD</color>
+    <color name="background">#F5F5F5</color>
+    <color name="surface">#FFFFFF</color>    <color name="error">#B00020</color>
+    <color name="error_light">#F05545</color>
+    <color name="success">#4CAF50</color>
+    <color name="success_light">#80E27E</color>
+    <color name="warning">#FFC107</color>
+    <color name="info">#2196F3</color>
+    
+    <!-- Dark mode specific colors -->
+    <color name="dark_background">#121212</color>
+    <color name="dark_surface">#252525</color>
+    <color name="dark_card">#2C2C2C</color>
 </resources>

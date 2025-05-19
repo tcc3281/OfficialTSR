@@ -1,6 +1,34 @@
 <resources>
+    <!-- Base colors -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="blue">#1877F2</color>
+    <color name="gray">#B0B0B0</color>
+      <!-- Dark theme color palette -->
+    <color name="primary">#2196F3</color>
+    <color name="primary_dark">#1976D2</color>
+    <color name="primary_light">#BBDEFB</color>
+    <color name="secondary">#FF4081</color> <!-- Added for compatibility -->
+    <color name="accent">#FF4081</color>
+    <color name="accent_light">#FF80AB</color>
+      <!-- Text colors for dark theme - these are the important changes -->
+    <color name="text">#E6FFFFFF</color> <!-- Added for compatibility -->
+    <color name="text_primary">#E6FFFFFF</color> <!-- White with 90% opacity -->
+    <color name="text_secondary">#B3FFFFFF</color> <!-- White with 70% opacity -->
+    
+    <color name="divider">#3DFFFFFF</color> <!-- White with 24% opacity -->
     <color name="background">#121212</color>
-    <color name="text">#FFFFFF</color>
-    <color name="primary">#BB86FC</color>
-    <color name="secondary">#03DAC6</color>
+    <color name="surface">#252525</color>
+    
+    <color name="error">#CF6679</color>
+    <color name="error_light">#F05545</color>
+    <color name="success">#4CAF50</color>
+    <color name="success_light">#80E27E</color>
+    <color name="warning">#FFC107</color>
+    <color name="info">#2196F3</color>
+    
+    <!-- Dark mode specific colors -->
+    <color name="dark_background">#121212</color>
+    <color name="dark_surface">#252525</color>
+    <color name="dark_card">#2C2C2C</color>
 </resources>
