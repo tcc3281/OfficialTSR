@@ -66,7 +66,7 @@ public class UserInfoFragment extends Fragment {
             
             // Set button text for registration
             view.findViewById(R.id.btn_save_user_info).setContentDescription("Register");
-            ((Button)view.findViewById(R.id.btn_save_user_info)).setText("Register");
+            ((Button)view.findViewById(R.id.btn_save_user_info)).setText("Đăng ký");
         } else {
             // If updating profile, prefill with existing data if user is logged in
             if (auth.getCurrentUser() != null) {

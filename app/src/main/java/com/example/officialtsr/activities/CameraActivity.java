@@ -63,7 +63,6 @@ public class CameraActivity extends AppCompatActivity {    private static final 
     private CameraPreview cameraPreview;
     private Handler frameHandler = new Handler(Looper.getMainLooper());
     private Runnable frameCaptureRunnable;
-    private Button sendButton;
     private RecyclerView resultRecyclerView;
     private TrafficSignAdapter trafficSignAdapter;
     private List<TrafficSign> trafficSigns = new ArrayList<>();
@@ -83,8 +82,7 @@ public class CameraActivity extends AppCompatActivity {    private static final 
         });
         resultRecyclerView.setAdapter(trafficSignAdapter);
 
-        sendButton = findViewById(R.id.btn_send_frame);
-        sendButton.setOnClickListener(v -> captureAndSendFrame());
+
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);

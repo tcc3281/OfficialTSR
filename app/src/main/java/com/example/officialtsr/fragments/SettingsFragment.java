@@ -28,9 +28,9 @@ public class SettingsFragment extends Fragment {
     private RecyclerView settingsRecyclerView;
 
     private static final String[] settingsOptions = {
-        "Account",
-        "Dark Mode",
-        "Logout"
+        "Tài khoản",
+        "Chế độ tối",
+        "Đăng xuất"
     };
 
     @Nullable

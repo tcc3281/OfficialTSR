@@ -1,4 +1,4 @@
-<androidx.constraintlayout.widget.ConstraintLayout 
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -13,25 +13,24 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
-        
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
-            
-            <!-- App Introduction Card -->
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="3dp"
                 app:cardUseCompatPadding="true">
-                
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="180dp">
-                    
+
                     <ImageView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
@@ -42,7 +41,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent" />
-                        
+
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -52,11 +51,11 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent">
-                        
+
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Welcome to TSR"
+                            android:text="Chào mừng đến với TSR"
                             android:textSize="24sp"
                             android:textColor="@color/white"
                             android:textStyle="bold"
@@ -65,11 +64,11 @@
                             android:shadowDx="1"
                             android:shadowDy="1"
                             android:shadowRadius="2" />
-                            
+
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Recognize traffic signs using your camera"
+                            android:text="Nhận diện biển báo giao thông bằng camera của bạn"
                             android:textSize="16sp"
                             android:textColor="@color/white"
                             android:layout_marginBottom="16dp"
@@ -77,12 +76,12 @@
                             android:shadowDx="1"
                             android:shadowDy="1"
                             android:shadowRadius="2" />
-                            
+
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_camera"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Open Camera"
+                            android:text="Mở Camera"
                             android:textAllCaps="false"
                             app:icon="@android:drawable/ic_menu_camera"
                             app:iconGravity="textStart"
@@ -90,20 +89,18 @@
                     </LinearLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
-            
-            <!-- Feature Cards -->
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Features"
+                android:text="Tính năng"
                 android:textSize="18sp"
                 android:textColor="@color/text_primary"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginStart="8dp" />
-                
-            <!-- Camera Feature Card -->
+
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_camera_feature"
                 android:layout_width="match_parent"
@@ -111,13 +108,13 @@
                 app:cardCornerRadius="12dp"
                 app:cardElevation="2dp"
                 app:cardUseCompatPadding="true">
-                
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:padding="16dp">
-                    
+
                     <ImageView
                         android:layout_width="48dp"
                         android:layout_height="48dp"
@@ -125,30 +122,29 @@
                         android:tint="@color/primary"
                         android:layout_gravity="center_vertical"
                         android:layout_marginEnd="16dp" />
-                        
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
-                        
+
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Camera Recognition"
+                            android:text="Nhận diện bằng Camera"
                             android:textSize="16sp"
                             android:textStyle="bold"
                             android:textColor="@color/text_primary" />
-                            
+
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Point your camera at traffic signs to identify them in real-time"
+                            android:text="Hướng camera vào biển báo giao thông để nhận diện chúng trong thời gian thực"
                             android:textColor="@color/text_secondary" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-            
-            <!-- List Feature Card -->
+
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_list_feature"
                 android:layout_width="match_parent"
@@ -156,13 +152,13 @@
                 app:cardCornerRadius="12dp"
                 app:cardElevation="2dp"
                 app:cardUseCompatPadding="true">
-                
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:padding="16dp">
-                    
+
                     <ImageView
                         android:layout_width="48dp"
                         android:layout_height="48dp"
@@ -170,70 +166,66 @@
                         android:tint="@color/accent"
                         android:layout_gravity="center_vertical"
                         android:layout_marginEnd="16dp" />
-                        
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
-                        
+
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Traffic Sign Library"
+                            android:text="Thư viện biển báo giao thông"
                             android:textSize="16sp"
                             android:textStyle="bold"
                             android:textColor="@color/text_primary" />
-                            
+
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Browse a comprehensive list of traffic signs and their meanings"
+                            android:text="Duyệt danh sách toàn diện các biển báo giao thông và ý nghĩa của chúng"
                             android:textColor="@color/text_secondary" />                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            
-            <!-- Latest Activity Section -->
 
-
-            <!-- Tips Section -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Tips"
+                android:text="Mẹo"
                 android:textSize="18sp"
                 android:textColor="@color/text_primary"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginStart="8dp" />
-                
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="2dp"
                 app:cardUseCompatPadding="true">
-                
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="For best recognition results:"
+                        android:text="Để có kết quả nhận diện tốt nhất:"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="@color/text_primary"
                         android:layout_marginBottom="8dp" />
-                        
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="• Hold your phone steady\n• Ensure good lighting\n• Frame the sign clearly\n• Avoid glare and shadows"
+                        android:text="• Giữ điện thoại ổn định\n• Đảm bảo đủ ánh sáng\n• Canh khung biển báo rõ ràng\n• Tránh ánh sáng chói và bóng đổ"
                         android:textColor="@color/text_secondary"
                         android:lineSpacingExtra="6dp" />
                 </LinearLayout>

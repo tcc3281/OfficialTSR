@@ -105,7 +105,7 @@
                         android:id="@+id/btn_edit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Edit Profile"
+                        android:text="Cập nhập thông tin"
                         android:textAllCaps="false"
                         app:icon="@android:drawable/ic_menu_edit"
                         app:iconGravity="textStart"
