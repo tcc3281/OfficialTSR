@@ -3,6 +3,7 @@ package com.example.officialtsr.activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.officialtsr.R;
+import com.example.officialtsr.fragments.UserInfoFragment;
 import com.example.officialtsr.utils.AuthManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -110,7 +112,23 @@ public class AccountActivity extends AppCompatActivity {
     }
 
     private void navigateToRegistration() {
-        Toast.makeText(this, "Chức năng đăng ký chưa được triển khai", Toast.LENGTH_SHORT).show();
+        // Create a registration fragment and bundle
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("isRegistration", true);
+
+        // Create UserInfoFragment for registration
+        UserInfoFragment registrationFragment = new UserInfoFragment();
+        registrationFragment.setArguments(bundle);
+
+        // Show the registration fragment
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, registrationFragment)
+                .addToBackStack(null)
+                .commit();
+
+        // Make the fragment container visible and hide the login content
+        findViewById(R.id.fragment_container).setVisibility(View.VISIBLE);
+        findViewById(R.id.login_content).setVisibility(View.GONE);
     }
 
     private void navigateToMainActivity() {
@@ -153,5 +171,20 @@ public class AccountActivity extends AppCompatActivity {
                         showError("Đăng nhập Google thất bại.");
                     }
                 });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            // If there are fragments in the back stack, pop one
+            getSupportFragmentManager().popBackStack();
+
+            // Show the login content and hide the fragment container
+            findViewById(R.id.login_content).setVisibility(View.VISIBLE);
+            findViewById(R.id.fragment_container).setVisibility(View.GONE);
+        } else {
+            // Otherwise, handle back press as usual
+            super.onBackPressed();
+        }
     }
 }

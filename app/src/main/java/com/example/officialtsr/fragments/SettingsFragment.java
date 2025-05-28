@@ -28,9 +28,9 @@ public class SettingsFragment extends Fragment {
     private RecyclerView settingsRecyclerView;
 
     private static final String[] settingsOptions = {
-        "Account",
-        "Dark Mode",
-        "Logout"
+        "Tài khoản",
+        "Chế độ tối",
+        "Đăng xuất"
     };
 
     @Nullable
@@ -46,12 +46,12 @@ public class SettingsFragment extends Fragment {
         settingsRecyclerView = view.findViewById(R.id.settings_recycler_view);
 
         setupSettingsRecyclerView();
-    }
-
-    private void setupSettingsRecyclerView() {
-        settingsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        SettingsAdapter settingsAdapter = new SettingsAdapter(settingsOptions, this::handleSettingsClick);
-        settingsRecyclerView.setAdapter(settingsAdapter);
+    }    private void setupSettingsRecyclerView() {
+        if (settingsRecyclerView != null) {
+            settingsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+            SettingsAdapter settingsAdapter = new SettingsAdapter(settingsOptions, this::handleSettingsClick);
+            settingsRecyclerView.setAdapter(settingsAdapter);
+        }
     }
 
     private void handleSettingsClick(int position) {

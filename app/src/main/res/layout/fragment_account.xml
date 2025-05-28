@@ -1,126 +1,248 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@color/background"
+    android:fillViewport="true">
 
-    <!-- Avatar -->
-    <ImageView
-        android:id="@+id/avatar_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/ic_launcher_foreground"
-        android:layout_gravity="center"
-        android:layout_marginBottom="16dp" />
-
-    <!-- Account Info Display -->
     <LinearLayout
-        android:id="@+id/account_info_display"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginBottom="16dp">
+        android:padding="16dp">
 
-        <TextView
-            android:id="@+id/display_email"
+        <!-- Profile Header Card -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Email: example@example.com"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp" />
+            app:cardCornerRadius="12dp"
+            app:cardElevation="3dp"
+            app:cardUseCompatPadding="true"
+            app:contentPadding="16dp">
 
-        <TextView
-            android:id="@+id/display_first_name"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <!-- Avatar with border -->
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/avatar_image"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/user"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.TSR.CircleImageView"
+                    app:strokeColor="@color/primary"
+                    app:strokeWidth="2dp"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Account Info Display -->
+                <LinearLayout
+                    android:id="@+id/account_info_display"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    
+                    <TextView
+                        android:id="@+id/display_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Email: example@example.com"
+                        android:textSize="16sp"
+                        android:textAlignment="center"
+                        android:textColor="@color/text_primary"
+                        android:layout_marginBottom="8dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center" >
+
+                        <TextView
+                            android:id="@+id/display_first_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="John"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" "
+                            android:textSize="20sp" />
+
+                        <TextView
+                            android:id="@+id/display_last_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Doe"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/display_date_of_birth"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Born: 01/01/1990"
+                        android:textSize="14sp"
+                        android:textAlignment="center"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Edit Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_edit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cập nhập thông tin"
+                        android:textAllCaps="false"
+                        app:icon="@android:drawable/ic_menu_edit"
+                        app:iconGravity="textStart"
+                        style="@style/Widget.TSR.Button" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Form for editing -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/edit_form_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="First Name: John"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp" />
+            app:cardCornerRadius="12dp"
+            app:cardElevation="3dp"
+            app:cardUseCompatPadding="true"
+            app:contentPadding="16dp"
+            android:visibility="gone">
+            
+            <LinearLayout
+                android:id="@+id/edit_form"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Edit Your Profile"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:layout_marginBottom="16dp"
+                    android:textAlignment="center" />
 
-        <TextView
-            android:id="@+id/display_last_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Last Name: Doe"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp" />
+                <!-- Change Avatar Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_change_avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Change Avatar"
+                    android:textAllCaps="false"
+                    app:icon="@android:drawable/ic_menu_camera"
+                    app:iconGravity="textStart"
+                    android:layout_marginBottom="16dp"
+                    style="@style/Widget.TSR.Button.Outlined" />
 
-        <TextView
-            android:id="@+id/display_date_of_birth"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Date of Birth: 1990-01-01"
-            android:textSize="16sp" />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:hint="Email"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:endIconMode="none">
+                    
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/input_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress"
+                        android:enabled="false" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:hint="First Name"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/input_first_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:hint="Last Name"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/input_last_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Date of Birth"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/input_date_of_birth"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none" 
+                        android:focusable="false"
+                        android:clickable="true"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Action Buttons -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="end">
+                    
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_save"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Save"
+                        android:textAllCaps="false"
+                        app:icon="@android:drawable/ic_menu_save"
+                        app:iconGravity="textStart"
+                        style="@style/Widget.TSR.Button" />
+                </LinearLayout>
+                
+                <!-- Change Password Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_change_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Change Password"
+                    android:textAllCaps="false"
+                    app:icon="@android:drawable/ic_lock_lock"
+                    app:iconGravity="textStart"
+                    android:layout_marginTop="24dp"
+                    style="@style/Widget.TSR.Button.Outlined" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
-
-    <!-- Edit Button -->
-    <Button
-        android:id="@+id/btn_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Edit"
-        android:layout_gravity="center"
-        android:layout_marginBottom="16dp" />
-
-    <!-- Form for editing -->
-    <LinearLayout
-        android:id="@+id/edit_form"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <!-- Change Avatar Button -->
-        <Button
-            android:id="@+id/btn_change_avatar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Change Avatar"
-            android:layout_marginBottom="8dp" />
-
-        <EditText
-            android:id="@+id/input_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Email"
-            android:inputType="textEmailAddress"
-            android:layout_marginBottom="8dp"
-            android:enabled="false" />
-
-        <EditText
-            android:id="@+id/input_first_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="First Name"
-            android:layout_marginBottom="8dp" />
-
-        <EditText
-            android:id="@+id/input_last_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Last Name"
-            android:layout_marginBottom="8dp" />
-
-        <EditText
-            android:id="@+id/input_date_of_birth"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Date of Birth (YYYY-MM-DD)"
-            android:layout_marginBottom="8dp" />
-
-        <Button
-            android:id="@+id/btn_save"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Save" />
-
-        <Button
-            android:id="@+id/btn_change_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Change Password"
-            android:layout_marginTop="16dp" />
-    </LinearLayout>
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>

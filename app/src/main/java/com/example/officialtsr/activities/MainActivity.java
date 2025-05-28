@@ -63,8 +63,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            Fragment selectedFragment = null;
+        bottomNavigationView.setOnItemSelectedListener(item -> {            Fragment selectedFragment = null;
             int itemId = item.getItemId(); // Explicitly get the item ID
             if (itemId == R.id.nav_main) {
                 selectedFragment = new MainFragment();
@@ -80,10 +79,11 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
             }
             return true;
-        });
-
-        // Set default fragment
+        });        // Set default fragment
         if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new MainFragment())
+                .commit();
             bottomNavigationView.setSelectedItemId(R.id.nav_main);
         }
 

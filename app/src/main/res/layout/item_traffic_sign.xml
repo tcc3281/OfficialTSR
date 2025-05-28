@@ -1,47 +1,88 @@
-<LinearLayout
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="8dp">
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="2dp"
+    app:contentPadding="0dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:rippleColor="@color/primary_light"
+    android:foreground="?android:attr/selectableItemBackground"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/divider">
 
-    <ImageView
-        android:id="@+id/traffic_sign_image"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:contentDescription="Traffic Sign Image"
-        android:scaleType="centerCrop"
-        android:layout_marginEnd="8dp" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        <!-- Category color indicator -->
+        <View
+            android:id="@+id/category_indicator"
+            android:layout_width="4dp"
+            android:layout_height="0dp"
+            android:background="@color/primary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-        <TextView
-            android:id="@+id/traffic_sign_name"
-            android:layout_width="wrap_content"
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/traffic_sign_image"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:contentDescription="Traffic Sign Image"
+            android:scaleType="centerCrop"
+            android:layout_marginStart="4dp"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.TSR.SmallComponent"
+            app:layout_constraintStart_toEndOf="@id/category_indicator"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="SIGN_NAME"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black" />
+            android:orientation="vertical"
+            android:padding="12dp"
+            app:layout_constraintStart_toEndOf="@id/traffic_sign_image"
+            app:layout_constraintEnd_toStartOf="@id/more_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
-            android:id="@+id/traffic_sign_law_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="LAW_ID"
-            android:textSize="14sp"
-            android:textColor="@android:color/darker_gray" />
+            <TextView
+                android:id="@+id/traffic_sign_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SIGN_NAME"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginBottom="2dp" />
 
-        <TextView
-            android:id="@+id/traffic_sign_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="DESCRIPTION"
-            android:textSize="14sp"
-            android:textColor="@android:color/darker_gray" />
-    </LinearLayout>
-</LinearLayout>
+            <TextView
+                android:id="@+id/traffic_sign_law_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="LAW_ID"
+                android:textSize="14sp"
+                android:textColor="@color/primary"
+                android:layout_marginBottom="2dp" />
+        </LinearLayout>
+        
+        <ImageView
+            android:id="@+id/more_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_menu_more"
+            android:tint="@color/text_secondary"
+            android:layout_marginEnd="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>
