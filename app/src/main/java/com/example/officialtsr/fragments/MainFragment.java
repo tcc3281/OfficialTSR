@@ -15,20 +15,14 @@ import androidx.fragment.app.Fragment;
 
 import com.example.officialtsr.R;
 import com.example.officialtsr.activities.CameraActivity;
-import com.example.officialtsr.api.RetrofitClient;
-import com.example.officialtsr.api.TrafficSignApiService;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainFragment extends Fragment {
 
-    @Nullable    
+    @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
-        
+
         try {
             Button btnCamera = view.findViewById(R.id.btn_camera);
             btnCamera.setOnClickListener(v -> openCamera());

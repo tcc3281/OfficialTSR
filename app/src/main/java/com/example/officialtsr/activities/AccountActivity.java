@@ -23,11 +23,12 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.android.gms.common.SignInButton;
 
 public class AccountActivity extends AppCompatActivity {
     private static final String TAG = "AccountActivity";
 
-    private FirebaseAuth mAuth;
+    private FirebaseAuth mAuth; //manages Firebase authentication
     private GoogleSignInClient mGoogleSignInClient;
     private AuthManager authManager;
     private ProgressDialog progressDialog;
@@ -64,7 +65,7 @@ public class AccountActivity extends AppCompatActivity {
     private void setupUI() {
         emailInput = findViewById(R.id.input_email);
         passwordInput = findViewById(R.id.input_password);
-        com.google.android.gms.common.SignInButton googleSignInButton = findViewById(R.id.btn_google_sign_in);
+        SignInButton googleSignInButton = findViewById(R.id.btn_google_sign_in);
         Button emailSignInButton = findViewById(R.id.btn_email_sign_in);
         Button emailRegisterButton = findViewById(R.id.btn_email_register);
 
