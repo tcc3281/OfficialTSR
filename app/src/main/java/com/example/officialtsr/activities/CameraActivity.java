@@ -173,7 +173,7 @@ public class CameraActivity extends AppCompatActivity {    private static final 
 
                             Log.d(TAG, "Temp file created: " + tempFile.exists() + " at " + tempFile.getAbsolutePath());
 
-                            // Compress the image with higher quality (0.9f) để có chất lượng tốt hơn
+                            // Compress the image with higher quality (0.9f) - luôn flip horizontally
                             File compressedImage = ImageCompressor.compressImage(CameraActivity.this, Uri.fromFile(tempFile), 0.9f, 1200);
 
                             Log.d(TAG, "Compressed file exists: " + (compressedImage != null && compressedImage.exists()));
@@ -217,7 +217,7 @@ public class CameraActivity extends AppCompatActivity {    private static final 
                     fos.write(jpegData);
                     fos.close();
 
-                    // Compress the image
+                    // Compress the image - luôn flip horizontally  
                     File compressedImage = ImageCompressor.compressImage(CameraActivity.this, Uri.fromFile(tempFile), 0.8f, 800);
 
                     // Send the image to the server
