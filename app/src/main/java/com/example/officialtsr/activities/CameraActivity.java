@@ -113,7 +113,7 @@ public class CameraActivity extends AppCompatActivity {    private static final 
             return null;
         }
     }
-
+    // Set the camera display orientation based on the device's rotation
     private void setCameraDisplayOrientation() {
         Camera.CameraInfo info = new Camera.CameraInfo();
         Camera.getCameraInfo(Camera.CameraInfo.CAMERA_FACING_BACK, info);
@@ -142,7 +142,9 @@ public class CameraActivity extends AppCompatActivity {    private static final 
             result = (info.orientation - degrees + 360) % 360;
         }
         camera.setDisplayOrientation(result);
-    }    private void startFrameCapture() {
+    }    
+    // Start capturing frames at regular intervals
+    private void startFrameCapture() {
         frameCaptureRunnable = new Runnable() {
             @Override
             public void run() {
@@ -198,7 +200,7 @@ public class CameraActivity extends AppCompatActivity {    private static final 
         };
         frameHandler.post(frameCaptureRunnable);
     }
-
+    // Capture a frame manually
     private void captureAndSendFrame() {
         if (camera != null) {
             camera.setOneShotPreviewCallback((data, camera) -> {
@@ -231,7 +233,7 @@ public class CameraActivity extends AppCompatActivity {    private static final 
             Log.e(TAG, "Camera is null. Unable to capture frame (manual capture)."); // Log if camera is null
         }
     }
-
+    // Send the captured frame to the server through the API
     private void sendFrameToServer(File imageFile) {
         TrafficSignApiService apiService = RetrofitClient.getInstance().create(TrafficSignApiService.class);
 
