@@ -54,10 +54,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CameraActivity extends AppCompatActivity {    private static final String TAG = "CameraActivity";
+public class CameraActivity extends AppCompatActivity {
+    private static final String TAG = "CameraActivity";
     private static final int REQUEST_CAMERA_PERMISSION = 200;
-    private static final int FRAME_INTERVAL = 5000; // 5 seconds
-    private static final int REFRESH_INTERVAL = 5000; // 5 seconds
+    private static final int FRAME_INTERVAL = 3000; // 3 seconds
+    private static final int REFRESH_INTERVAL = 3000; // 3 seconds
 
     private Camera camera;
     private CameraPreview cameraPreview;
@@ -81,7 +82,6 @@ public class CameraActivity extends AppCompatActivity {    private static final 
             Toast.makeText(this, "Selected: " + trafficSign.getSignName(), Toast.LENGTH_SHORT).show();
         });
         resultRecyclerView.setAdapter(trafficSignAdapter);
-
 
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -113,6 +113,7 @@ public class CameraActivity extends AppCompatActivity {    private static final 
             return null;
         }
     }
+
     // Set the camera display orientation based on the device's rotation
     private void setCameraDisplayOrientation() {
         Camera.CameraInfo info = new Camera.CameraInfo();
@@ -142,7 +143,8 @@ public class CameraActivity extends AppCompatActivity {    private static final 
             result = (info.orientation - degrees + 360) % 360;
         }
         camera.setDisplayOrientation(result);
-    }    
+    }
+
     // Start capturing frames at regular intervals
     private void startFrameCapture() {
         frameCaptureRunnable = new Runnable() {
@@ -152,11 +154,12 @@ public class CameraActivity extends AppCompatActivity {    private static final 
                     runOnUiThread(() -> {
                         // Cập nhật trạng thái để người dùng biết đang xử lý
                         TextView statusText = findViewById(R.id.recognition_status);
-                        if (statusText != null) {                            statusText.setText("Đang quét biển báo...");
+                        if (statusText != null) {
+                            statusText.setText("Đang quét biển báo...");
                             statusText.setVisibility(View.VISIBLE);
                         }
                     });
-                    
+
                     camera.setOneShotPreviewCallback((data, camera) -> {
                         try {
                             Log.d(TAG, "Capturing frame automatically at interval: " + FRAME_INTERVAL + "ms");
@@ -167,16 +170,31 @@ public class CameraActivity extends AppCompatActivity {    private static final 
                             yuvImage.compressToJpeg(new Rect(0, 0, size.width, size.height), 100, out);
                             byte[] jpegData = out.toByteArray();
 
-                            // Write data to a temporary file
-                            File tempFile = File.createTempFile("frame", ".jpg", getCacheDir());
-                            FileOutputStream fos = new FileOutputStream(tempFile);
-                            fos.write(jpegData);
-                            fos.close();
+                            // Đọc bitmap từ dữ liệu JPEG
+                            android.graphics.Bitmap bitmap = android.graphics.BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length);
+                            // Lấy orientation của thiết bị và tính toán góc xoay cần thiết
+                            int rotation = getWindowManager().getDefaultDisplay().getRotation();
+                            int degrees = 0;
+                            switch (rotation) {
+                                case Surface.ROTATION_0: degrees = 90; break;  // Portrait: xoay 90 độ
+                                case Surface.ROTATION_90: degrees = 0; break;  // Landscape (9h): không xoay
+                                case Surface.ROTATION_180: degrees = 270; break; // Portrait ngược: xoay 270 độ
+                                case Surface.ROTATION_270: degrees = 180; break; // Landscape (3h): xoay 180 độ
+                            }
+                            Log.d(TAG, "Device rotation: " + rotation + ", applying rotation: " + degrees + " degrees");
+                            // Xoay lại bitmap cho đúng hướng
+                            android.graphics.Matrix matrix = new android.graphics.Matrix();
+                            if (degrees != 0) matrix.postRotate(degrees);
+                            android.graphics.Bitmap rotatedBitmap = (degrees != 0) ? android.graphics.Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true) : bitmap;
+                            // Lưu rotatedBitmap thành file tạm
+                            File rotatedFile = File.createTempFile("rotated_frame", ".jpg", getCacheDir());
+                            FileOutputStream rotatedFos = new FileOutputStream(rotatedFile);
+                            rotatedBitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 100, rotatedFos);
+                            rotatedFos.close();
+                            if (rotatedBitmap != bitmap) bitmap.recycle();
 
-                            Log.d(TAG, "Temp file created: " + tempFile.exists() + " at " + tempFile.getAbsolutePath());
-
-                            // Compress the image with higher quality (0.9f) - luôn flip horizontally
-                            File compressedImage = ImageCompressor.compressImage(CameraActivity.this, Uri.fromFile(tempFile), 0.9f, 1200);
+                            // Compress the image for AI processing (không flip ngang)
+                            File compressedImage = ImageCompressor.compressImageForAI(CameraActivity.this, Uri.fromFile(rotatedFile), false);
 
                             Log.d(TAG, "Compressed file exists: " + (compressedImage != null && compressedImage.exists()));
 
@@ -200,6 +218,7 @@ public class CameraActivity extends AppCompatActivity {    private static final 
         };
         frameHandler.post(frameCaptureRunnable);
     }
+
     // Capture a frame manually
     private void captureAndSendFrame() {
         if (camera != null) {
@@ -213,14 +232,31 @@ public class CameraActivity extends AppCompatActivity {    private static final 
                     yuvImage.compressToJpeg(new Rect(0, 0, size.width, size.height), 100, out);
                     byte[] jpegData = out.toByteArray();
 
-                    // Create a temporary file for the frame
-                    File tempFile = File.createTempFile("frame", ".jpg", getCacheDir());
-                    FileOutputStream fos = new FileOutputStream(tempFile);
-                    fos.write(jpegData);
-                    fos.close();
+                    // Đọc bitmap từ dữ liệu JPEG
+                    android.graphics.Bitmap bitmap = android.graphics.BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length);
+                    // Lấy orientation của thiết bị và tính toán góc xoay cần thiết
+                    int rotation = getWindowManager().getDefaultDisplay().getRotation();
+                    int degrees = 0;
+                    switch (rotation) {
+                        case Surface.ROTATION_0: degrees = 90; break;  // Portrait: xoay 90 độ
+                        case Surface.ROTATION_90: degrees = 0; break;  // Landscape (9h): không xoay
+                        case Surface.ROTATION_180: degrees = 270; break; // Portrait ngược: xoay 270 độ
+                        case Surface.ROTATION_270: degrees = 180; break; // Landscape (3h): xoay 180 độ
+                    }
+                    Log.d(TAG, "Manual capture - Device rotation: " + rotation + ", applying rotation: " + degrees + " degrees");
+                    // Xoay lại bitmap cho đúng hướng
+                    android.graphics.Matrix matrix = new android.graphics.Matrix();
+                    if (degrees != 0) matrix.postRotate(degrees);
+                    android.graphics.Bitmap rotatedBitmap = (degrees != 0) ? android.graphics.Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true) : bitmap;
+                    // Lưu rotatedBitmap thành file tạm
+                    File rotatedFile = File.createTempFile("rotated_frame", ".jpg", getCacheDir());
+                    FileOutputStream rotatedFos = new FileOutputStream(rotatedFile);
+                    rotatedBitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 100, rotatedFos);
+                    rotatedFos.close();
+                    if (rotatedBitmap != bitmap) bitmap.recycle();
 
-                    // Compress the image - luôn flip horizontally  
-                    File compressedImage = ImageCompressor.compressImage(CameraActivity.this, Uri.fromFile(tempFile), 0.8f, 800);
+                    // Compress the image for AI processing (không flip ngang)
+                    File compressedImage = ImageCompressor.compressImageForAI(CameraActivity.this, Uri.fromFile(rotatedFile), false);
 
                     // Send the image to the server
                     sendFrameToServer(compressedImage);
@@ -233,6 +269,7 @@ public class CameraActivity extends AppCompatActivity {    private static final 
             Log.e(TAG, "Camera is null. Unable to capture frame (manual capture)."); // Log if camera is null
         }
     }
+
     // Send the captured frame to the server through the API
     private void sendFrameToServer(File imageFile) {
         TrafficSignApiService apiService = RetrofitClient.getInstance().create(TrafficSignApiService.class);
@@ -261,35 +298,37 @@ public class CameraActivity extends AppCompatActivity {    private static final 
                 Log.e(TAG, "Error sending frame: " + t.getMessage(), t);
             }
         });
-    }    private void handleApiResponse(String responseBody) {
+    }
+
+    private void handleApiResponse(String responseBody) {
         try {
             JSONObject jsonResponse = new JSONObject(responseBody);
             JSONArray classificationResults = jsonResponse.optJSONArray("classification_results");
             List<String> detectedLabels = new ArrayList<>();
-            
+
             runOnUiThread(() -> {
                 TextView statusText = findViewById(R.id.recognition_status);
                 if (statusText != null) {
                     statusText.setText("Đang xử lý kết quả...");
                 }
             });
-            
+
             if (classificationResults != null && classificationResults.length() > 0) {
                 Log.d(TAG, "Found " + classificationResults.length() + " traffic signs");
-                
+
                 for (int i = 0; i < classificationResults.length(); i++) {
                     String label = classificationResults.getString(i);
                     Log.d(TAG, "Detected label: " + label);
                     detectedLabels.add(label); // Collect all detected labels
                 }
-                
+
                 runOnUiThread(() -> {
                     TextView resultTitle = findViewById(R.id.result_title);
                     if (resultTitle != null) {
                         resultTitle.setText("Phát hiện " + classificationResults.length() + " biển báo");
                     }
                 });
-                
+
                 fetchTrafficSignDetails(detectedLabels); // Pass all labels to fetchTrafficSignDetails
             } else {
                 Log.d(TAG, "No traffic signs detected in this frame");
@@ -298,15 +337,15 @@ public class CameraActivity extends AppCompatActivity {    private static final 
                     if (statusText != null) {
                         statusText.setText("Không phát hiện biển báo");
                     }
-                    
+
                     TextView resultTitle = findViewById(R.id.result_title);
                     if (resultTitle != null) {
                         resultTitle.setText("Không phát hiện biển báo nào");
                     }
-                    
+
                     Toast.makeText(this, "Không tìm thấy biển báo nào", Toast.LENGTH_SHORT).show();
                 });
-                
+
                 detectedLabels.clear(); // Clear the list if no labels are detected
                 fetchTrafficSignDetails(detectedLabels);
             }
@@ -319,7 +358,9 @@ public class CameraActivity extends AppCompatActivity {    private static final 
                 }
             });
         }
-    }    private void fetchTrafficSignDetails(List<String> labels) {
+    }
+
+    private void fetchTrafficSignDetails(List<String> labels) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         trafficSigns.clear(); // Always clear the list to ensure it refreshes
         trafficSignAdapter.notifyDataSetChanged(); // Notify adapter immediately to reflect the empty state
@@ -345,94 +386,95 @@ public class CameraActivity extends AppCompatActivity {    private static final 
         }
 
         Log.d(TAG, "Fetching details for " + labels.size() + " labels: " + labels.toString());
-        
+
         db.collection("TrafficSign")
-            .whereIn("LABEL", labels) // Query for all matching labels
-            .get()
-            .addOnSuccessListener(queryDocumentSnapshots -> {
-                if (!queryDocumentSnapshots.isEmpty()) {
-                    Log.d(TAG, "Found " + queryDocumentSnapshots.size() + " traffic signs in Firestore");
-                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {                        String name = document.getString("SIGN_NAME");
-                        String description = document.getString("DESCRIPTION");
-                        String imageLink = document.getString("IMAGE_LINK");
-                        String lawId = document.getString("LAW_ID");
-                        String label = document.getString("LABEL");
-                        String type = document.getString("TYPE");  // Thêm loại biển báo
-                        
-                        // Nếu không có TYPE trong Firestore, phân loại dựa trên mã biển báo
-                        if (type == null && label != null) {
-                            // Phân loại dựa vào prefix của label (P: prohibition, W: warning, I: information, R: regulatory)
-                            if (label.startsWith("P")) {
-                                type = "prohibition";
-                            } else if (label.startsWith("W")) {
-                                type = "warning";
-                            } else if (label.startsWith("I")) {
-                                type = "information";
-                            } else if (label.startsWith("R")) {
-                                type = "mandatory";
-                            } else {
-                                type = "other";
+                .whereIn("LABEL", labels) // Query for all matching labels
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        Log.d(TAG, "Found " + queryDocumentSnapshots.size() + " traffic signs in Firestore");
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            String name = document.getString("SIGN_NAME");
+                            String description = document.getString("DESCRIPTION");
+                            String imageLink = document.getString("IMAGE_LINK");
+                            String lawId = document.getString("LAW_ID");
+                            String label = document.getString("LABEL");
+                            String type = document.getString("TYPE");  // Thêm loại biển báo
+
+                            // Nếu không có TYPE trong Firestore, phân loại dựa trên mã biển báo
+                            if (type == null && label != null) {
+                                // Phân loại dựa vào prefix của label (P: prohibition, W: warning, I: information, R: regulatory)
+                                if (label.startsWith("P")) {
+                                    type = "prohibition";
+                                } else if (label.startsWith("W")) {
+                                    type = "warning";
+                                } else if (label.startsWith("I")) {
+                                    type = "information";
+                                } else if (label.startsWith("R")) {
+                                    type = "mandatory";
+                                } else {
+                                    type = "other";
+                                }
                             }
+
+                            Log.d(TAG, "Adding sign: " + name + " with label: " + label + ", type: " + type);
+
+                            trafficSigns.add(new TrafficSign(
+                                    name,
+                                    description,
+                                    imageLink,
+                                    lawId,
+                                    name,
+                                    type,  // Sử dụng loại biển báo đã xác định
+                                    label
+                            ));
                         }
 
-                        Log.d(TAG, "Adding sign: " + name + " with label: " + label + ", type: " + type);
-                        
-                        trafficSigns.add(new TrafficSign(
-                            name,
-                            description,
-                            imageLink,
-                            lawId,
-                            name,
-                            type,  // Sử dụng loại biển báo đã xác định
-                            label
-                        ));
+                        runOnUiThread(() -> {
+                            TextView statusText = findViewById(R.id.recognition_status);
+                            if (statusText != null) {
+                                statusText.setText("Đã tìm thấy " + trafficSigns.size() + " biển báo");
+                            }
+
+                            TextView resultTitle = findViewById(R.id.result_title);
+                            if (resultTitle != null) {
+                                resultTitle.setText("Danh sách " + trafficSigns.size() + " biển báo");
+                            }
+
+                            trafficSignAdapter.notifyDataSetChanged(); // Refresh the adapter
+                        });
+                    } else {
+                        Log.d(TAG, "No matching traffic signs found in Firestore.");
+                        runOnUiThread(() -> {
+                            TextView statusText = findViewById(R.id.recognition_status);
+                            if (statusText != null) {
+                                statusText.setText("Không tìm thấy thông tin biển báo");
+                            }
+
+                            TextView resultTitle = findViewById(R.id.result_title);
+                            if (resultTitle != null) {
+                                resultTitle.setText("Không có thông tin biển báo");
+                            }
+                        });
                     }
-                    
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error fetching traffic sign details: " + e.getMessage(), e);
                     runOnUiThread(() -> {
                         TextView statusText = findViewById(R.id.recognition_status);
                         if (statusText != null) {
-                            statusText.setText("Đã tìm thấy " + trafficSigns.size() + " biển báo");
+                            statusText.setText("Lỗi kết nối cơ sở dữ liệu");
                         }
-                        
-                        TextView resultTitle = findViewById(R.id.result_title);
-                        if (resultTitle != null) {
-                            resultTitle.setText("Danh sách " + trafficSigns.size() + " biển báo");
-                        }
-                        
+
+                        trafficSigns.clear(); // Clear the list on failure
                         trafficSignAdapter.notifyDataSetChanged(); // Refresh the adapter
                     });
-                } else {
-                    Log.d(TAG, "No matching traffic signs found in Firestore.");
-                    runOnUiThread(() -> {
-                        TextView statusText = findViewById(R.id.recognition_status);
-                        if (statusText != null) {
-                            statusText.setText("Không tìm thấy thông tin biển báo");
-                        }
-                        
-                        TextView resultTitle = findViewById(R.id.result_title);
-                        if (resultTitle != null) {
-                            resultTitle.setText("Không có thông tin biển báo");
-                        }
-                    });
-                }
-            })
-            .addOnFailureListener(e -> {
-                Log.e(TAG, "Error fetching traffic sign details: " + e.getMessage(), e);
-                runOnUiThread(() -> {
-                    TextView statusText = findViewById(R.id.recognition_status);
-                    if (statusText != null) {
-                        statusText.setText("Lỗi kết nối cơ sở dữ liệu");
-                    }
-                    
-                    trafficSigns.clear(); // Clear the list on failure
-                    trafficSignAdapter.notifyDataSetChanged(); // Refresh the adapter
+                })
+                .addOnCompleteListener(task -> {
+                    // Lập lịch cho lần gọi API tiếp theo, đặt lại mỗi 5 giây để đảm bảo tần suất chính xác
+                    refreshHandler.removeCallbacksAndMessages(null);
+                    refreshHandler.postDelayed(() -> captureAndSendFrame(), REFRESH_INTERVAL);
                 });
-            })
-            .addOnCompleteListener(task -> {
-                // Lập lịch cho lần gọi API tiếp theo, đặt lại mỗi 5 giây để đảm bảo tần suất chính xác
-                refreshHandler.removeCallbacksAndMessages(null);
-                refreshHandler.postDelayed(() -> captureAndSendFrame(), REFRESH_INTERVAL);
-            });
     }
 
     private void adjustLayoutForOrientation(int orientation) {
