@@ -49,8 +49,9 @@ public class ListFragment extends Fragment {
 
         loadTrafficSigns();
 
-        return view;    }
-    
+        return view;
+    }
+
     private void loadTrafficSigns() {
         try {
             MainActivity mainActivity = (MainActivity) requireActivity();
@@ -65,40 +66,40 @@ public class ListFragment extends Fragment {
                 showLoading(true);
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                 db.collection("TrafficSign")
-                    .orderBy("SIGN_NAME", Query.Direction.ASCENDING)
-                    .get()
-                    .addOnSuccessListener(queryDocumentSnapshots -> {
-                        trafficSigns.clear();
-                        queryDocumentSnapshots.forEach(document -> {
-                            String imageLink = document.getString("IMAGE_LINK");
-                            String lawId = document.getString("LAW_ID");
-                            String signName = document.getString("SIGN_NAME");
-                            String type = document.getString("TYPE");
-                            String description = document.getString("DESCRIPTION");
-                            String label = document.getString("LABEL"); // Fetch new field
+                        .orderBy("SIGN_NAME", Query.Direction.ASCENDING)
+                        .get()
+                        .addOnSuccessListener(queryDocumentSnapshots -> {
+                            trafficSigns.clear();
+                            queryDocumentSnapshots.forEach(document -> {
+                                String imageLink = document.getString("IMAGE_LINK");
+                                String lawId = document.getString("LAW_ID");
+                                String signName = document.getString("SIGN_NAME");
+                                String type = document.getString("TYPE");
+                                String description = document.getString("DESCRIPTION");
+                                String label = document.getString("LABEL"); // Fetch new field
 
-                            if (imageLink != null && lawId != null && signName != null && type != null) {
-                                trafficSigns.add(new TrafficSign(
-                                    null,
-                                    description != null ? description : "No description available",
-                                    imageLink,
-                                    lawId,
-                                    signName,
-                                    type,
-                                    label // Pass new field
-                                ));
-                            }
+                                if (imageLink != null && lawId != null && signName != null && type != null) {
+                                    trafficSigns.add(new TrafficSign(
+                                            null,
+                                            description != null ? description : "No description available",
+                                            imageLink,
+                                            lawId,
+                                            signName,
+                                            type,
+                                            label // Pass new field
+                                    ));
+                                }
+                            });
+
+                            mainActivity.saveTrafficSigns(trafficSigns);
+                            adapter.notifyDataSetChanged();
+                            isDataLoaded = true;
+                            showLoading(false);
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(getContext(), "Failed to load traffic signs: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            showLoading(false);
                         });
-
-                        mainActivity.saveTrafficSigns(trafficSigns);
-                        adapter.notifyDataSetChanged();
-                        isDataLoaded = true;
-                        showLoading(false);
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(getContext(), "Failed to load traffic signs: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        showLoading(false);
-                    });
             }
         } catch (Exception e) {
             Log.e(TAG, "Error loading traffic signs: " + e.getMessage());
@@ -106,7 +107,7 @@ public class ListFragment extends Fragment {
             showLoading(false);
         }
     }
-    
+
     private void showLoading(boolean isLoading) {
         if (progressBar != null && recyclerView != null) {
             progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
@@ -124,11 +125,11 @@ public class ListFragment extends Fragment {
         bundle.putString("type", trafficSign.getType());
         bundle.putString("description", trafficSign.getDescription());
         bundle.putString("label", trafficSign.getLabel()); // Pass label
-        detailsFragment.setArguments(bundle);
+        detailsFragment.setArguments(bundle); // Send data to the details fragment
 
         requireActivity().getSupportFragmentManager().beginTransaction()
-            .replace(R.id.fragment_container, detailsFragment)
-            .addToBackStack(null)
-            .commit();
+                .replace(R.id.fragment_container, detailsFragment)
+                .addToBackStack(null)
+                .commit();
     }
 }

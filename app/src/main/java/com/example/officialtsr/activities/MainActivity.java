@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences("settings", Context.MODE_PRIVATE);
         boolean isDarkMode = preferences.getBoolean("dark_mode", false);
         AppCompatDelegate.setDefaultNightMode(
-            isDarkMode ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
+                isDarkMode ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
         );
 
         EdgeToEdge.enable(this);
@@ -63,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnItemSelectedListener(item -> {            Fragment selectedFragment = null;
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            Fragment selectedFragment = null;
             int itemId = item.getItemId(); // Explicitly get the item ID
             if (itemId == R.id.nav_main) {
                 selectedFragment = new MainFragment();
@@ -75,15 +76,16 @@ public class MainActivity extends AppCompatActivity {
 
             if (selectedFragment != null) {
                 getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, selectedFragment)
-                    .commit();
+                        .replace(R.id.fragment_container, selectedFragment)
+                        .commit();
             }
             return true;
-        });        // Set default fragment
+        });
+        // Set default fragment
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, new MainFragment())
-                .commit();
+                    .replace(R.id.fragment_container, new MainFragment())
+                    .commit();
             bottomNavigationView.setSelectedItemId(R.id.nav_main);
         }
 
@@ -95,34 +97,34 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("TrafficSign")
-            .orderBy("SIGN_NAME", Query.Direction.ASCENDING)
-            .get()
-            .addOnSuccessListener(queryDocumentSnapshots -> {
-                cachedTrafficSigns.clear();
-                queryDocumentSnapshots.forEach(document -> {
-                    String imageLink = document.getString("IMAGE_LINK");
-                    String lawId = document.getString("LAW_ID");
-                    String signName = document.getString("SIGN_NAME");
-                    String type = document.getString("TYPE");
-                    String description = document.getString("DESCRIPTION");
-                    String label = document.getString("LABEL"); // Fetch label field
+                .orderBy("SIGN_NAME", Query.Direction.ASCENDING)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    cachedTrafficSigns.clear();
+                    queryDocumentSnapshots.forEach(document -> {
+                        String imageLink = document.getString("IMAGE_LINK");
+                        String lawId = document.getString("LAW_ID");
+                        String signName = document.getString("SIGN_NAME");
+                        String type = document.getString("TYPE");
+                        String description = document.getString("DESCRIPTION");
+                        String label = document.getString("LABEL"); // Fetch label field
 
-                    if (imageLink != null && lawId != null && signName != null && type != null) {
-                        cachedTrafficSigns.add(new TrafficSign(
-                            null,
-                            description != null ? description : "No description available",
-                            imageLink,
-                            lawId,
-                            signName,
-                            type,
-                            label // Pass label field
-                        ));
-                    }
+                        if (imageLink != null && lawId != null && signName != null && type != null) {
+                            cachedTrafficSigns.add(new TrafficSign(
+                                    null,
+                                    description != null ? description : "No description available",
+                                    imageLink,
+                                    lawId,
+                                    signName,
+                                    type,
+                                    label // Pass label field
+                            ));
+                        }
+                    });
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Failed to load traffic signs: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
-            })
-            .addOnFailureListener(e -> {
-                Toast.makeText(this, "Failed to load traffic signs: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            });
     }
 
     public List<TrafficSign> getCachedTrafficSigns() {
